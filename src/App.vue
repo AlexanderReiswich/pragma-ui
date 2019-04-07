@@ -1,25 +1,37 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+  <div id="app" class="page-container">
+    <div class="container max-width-900">
+      <img class="block centered push-v-xl max-width-200" alt="Pragma logo" src="@img/logo.svg" />
+
+      <ul class="inline-list space-around border-bottom-s border-subtle pad-s push-down-xl">
+        <li v-for="item in menu" :key="item.link">
+          <router-link :to="item.link" v-text="item.text" />
+        </li>
+      </ul>
+
+      <router-view />
     </div>
-    <router-view/>
   </div>
 </template>
-<style lang="stylus">
-#app
-  font-family 'Avenir', Helvetica, Arial, sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
-  text-align center
-  color #2c3e50
 
-#nav
-  padding 30px
-  a
-    font-weight bold
-    color #2c3e50
-    &.router-link-exact-active
-      color #42b983
+<script>
+import { Vue, Component } from 'vue-property-decorator'
+
+@Component
+export default class App extends Vue {
+  menu = [
+    {
+      link: '/forms',
+      text: 'Forms'
+    },
+    {
+      link: '/datalists',
+      text: 'Data Lists'
+    }
+  ]
+}
+</script>
+
+<style lang="stylus">
+@import 'assets/styles/pragma.postcss';
 </style>

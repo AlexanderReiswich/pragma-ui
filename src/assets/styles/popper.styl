@@ -1,0 +1,81 @@
+.popper
+  width 100%
+  display inline-block
+  position absolute
+  z-index 200000
+  .popper__arrow
+    position absolute
+    width 8px
+    height 8px
+    margin 5px
+    background-color #fff
+    transform rotate(45deg)
+    z-index 1
+
+.popper-inner
+  max-height 98vh
+  overflow auto
+  scrollbar-width thin
+
+.popper-inner::-webkit-scrollbar
+  width 5px
+
+.popper-inner::-webkit-scrollbar-track
+  background rgba(180, 180, 180, 0.2)
+
+.popper-inner::-webkit-scrollbar-thumb
+  background rgba(120, 120, 120, 0.6)
+
+.popper-inner::-webkit-scrollbar-button
+  height 5px
+
+.popper.with-arrow[x-placement^="top"]
+  margin-bottom 5px
+  .popper__arrow
+    bottom -5px
+    left calc(50% - 5px)
+    margin-top 0
+    margin-bottom 0
+
+.popper.with-arrow[x-placement^="bottom"]
+  margin-top 5px
+  .popper__arrow
+    top -5px
+    left calc(50% - 5px)
+    margin-top 0
+    margin-bottom 0
+
+.popper.with-arrow[x-placement^="right"]
+  margin-left 5px
+  .popper__arrow
+    left -5px
+    top calc(50% - 5px)
+    margin-left 0
+    margin-right 0
+
+.popper.with-arrow[x-placement^="left"]
+  margin-right 5px
+  .popper__arrow
+    right -5px
+    top calc(50% - 5px)
+    margin-left 0
+    margin-right 0
+
+.popper-fade-enter-active,
+.popper-fade-leave-active
+  transition opacity .3s cubic-bezier(0, 0.9, 0.3, 1)
+
+.popper-fade-enter,
+.popper-fade-leave-to
+  opacity 0
+
+.popper-fade-enter-active .popper-inner,
+.popper-fade-leave-active .popper-inner
+  transition transform .3s cubic-bezier(0, 0.9, 0.3, 1)
+  transform scale(1)
+
+.popper-fade-enter .popper-inner,
+.popper-fade-leave-to .popper-inner
+  transform scale(0.8)
+  transition transform .1s cubic-bezier(.4, 0.2, 0.7, .8)
+

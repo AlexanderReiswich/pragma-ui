@@ -1,0 +1,106 @@
+<template>
+  <div class="checkbox-container">
+    <label :for="cId" class="checkbox" :class="cLabelClass">
+      <input
+        type="checkbox"
+        :id="cId"
+        :name="name"
+        :checked="cValue"
+        :disabled="disabled"
+        @change="updateField"
+        ref="checkbox"
+      />
+      <span :class="cIndicatorClass" />
+      <span :class="cTextClass">
+        <slot />
+      </span>
+    </label>
+
+    <input-errors />
+
+    <input-notice />
+  </div>
+</template>
+
+<script>
+import { Component, Prop, Mixins } from 'vue-property-decorator'
+import { FieldMixin } from '@c/forms/mixins'
+import { InputLabel, InputErrors, InputNotice } from '@c/forms/partials'
+
+@Component({
+  components: {
+    InputLabel,
+    InputErrors,
+    InputNotice
+  }
+})
+export default class FormCheckbox extends Mixins(FieldMixin) {
+  @Prop({
+    type: String,
+    default: 'm'
+  })
+  size
+
+  @Prop(Boolean) switch
+  @Prop(String) labelClass
+  @Prop(String) indicatorClass
+  @Prop(String) textClass
+  @Prop(Boolean) disabled
+
+  /**
+   * Set the classes for the label element.
+   * If the labelClass prop is not supplied, the push-down class is added by default.
+   *
+   * @return string
+   */
+  get cLabelClass() {
+    if (this.labelClass) {
+      return this.labelClass
+    }
+
+    return 'push-down'
+  }
+
+  /**
+   * Set the classes for the indicator element based on the desired checkbox size.
+   * If the indicatorClass prop is supplied directly, a size class won't be set automatically.
+   *
+   * @return string
+   */
+  get cIndicatorClass() {
+    let c = [this.switch ? 'switch-indicator' : 'checkbox-indicator']
+
+    c.push(this.indicatorClass ? this.indicatorClass : 'size-' + this.size)
+
+    return c.join(' ')
+  }
+
+  /**
+   * Set the classes for the label text based on the desired checkbox size.
+   * Text sizes do not directly correspond to checkbox indicator sizes and therefore have to be mapped.
+   * If the textClass prop is supplied directly, a size class won't be set automatically.
+   *
+   * @return string
+   */
+  get cTextClass() {
+    if (this.textClass) {
+      return this.textClass
+    }
+
+    const sizes = {
+      xs: 's',
+      s: 'm',
+      m: 'l',
+      l: 'xl',
+      xl: '2xl'
+    }
+
+    return 'inline size-' + (sizes[this.size] ? sizes[this.size] : 'l')
+  }
+
+  updateField() {
+    // Trigger the value update
+    this.updateValue(!this.cValue)
+  }
+}
+</script>
