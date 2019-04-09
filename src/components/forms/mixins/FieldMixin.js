@@ -1,4 +1,4 @@
-import { Vue, Component, Inject, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Inject } from 'vue-property-decorator'
 import get from 'lodash.get'
 
 /**
@@ -8,9 +8,9 @@ import get from 'lodash.get'
  * It then reactively provides these properties so that the input fields child components can access them, as well.
  */
 @Component({
-  reactiveProvide: {
-    name: 'input',
-    include: [
+  provide() {
+    const input = {}
+    const includes = [
       'cId',
       'cValue',
       'name',
@@ -25,14 +25,19 @@ import get from 'lodash.get'
       'formLoading',
       'errors'
     ]
+
+    for (let i of includes) {
+      Object.defineProperty(input, i, {
+        enumerable: true,
+        get: () => this[i]
+      })
+    }
+
+    return { input }
   }
 })
 export default class FieldMixin extends Vue {
-  @Inject({
-    from: 'form',
-    default: null
-  })
-  form
+  @Inject() form
 
   @Prop(String) id
 
@@ -69,6 +74,10 @@ export default class FieldMixin extends Vue {
 
   localValue = null
 
+  get cForm() {
+    return this.form ? this.form : null
+  }
+
   /**
    * The computed name of the form container, used for the creation of the input fields id.
    * A random string is used if no name is supplied.
@@ -76,7 +85,7 @@ export default class FieldMixin extends Vue {
    * @returns string
    */
   get formName() {
-    return this.form ? this.form.name : ''
+    return this.cForm ? this.cForm.name : ''
   }
 
   /**
@@ -108,7 +117,7 @@ export default class FieldMixin extends Vue {
       return this.value
     }
 
-    const data = this.form ? this.form.localData : {}
+    const data = this.cForm ? this.cForm.localData : {}
 
     if (this.name && data) {
       const val = data[this.name]
@@ -131,7 +140,7 @@ export default class FieldMixin extends Vue {
    * @returns string|array
    */
   get formLoading() {
-    return this.form ? this.form.loading : false
+    return this.cForm ? this.cForm.loading : false
   }
 
   /**
@@ -140,7 +149,7 @@ export default class FieldMixin extends Vue {
    * @returns string|array
    */
   get errors() {
-    const errors = this.form ? this.form.errors : null
+    const errors = this.cForm ? this.cForm.errors : null
     return errors && errors[this.name] ? errors[this.name] : null
   }
 
@@ -164,11 +173,10 @@ export default class FieldMixin extends Vue {
   updateValue(e) {
     const value = typeof e === 'object' && e.target ? e.target.value : e
 
-    console.log(value)
     this.$emit('updated', value, this.cValue)
 
-    if (this.name && this.form) {
-      this.form.setValue(this.name, value)
+    if (this.name && this.cForm) {
+      this.cForm.setValue(this.name, value)
     } else {
       this.localValue = value
     }
@@ -178,8 +186,8 @@ export default class FieldMixin extends Vue {
    * Save the initial field value to local data on mount.
    */
   mounted() {
-    if (this.name && this.form) {
-      this.form.setValue(this.name, this.cValue)
+    if (this.name && this.cForm) {
+      this.cForm.setValue(this.name, this.cValue)
     }
   }
 }

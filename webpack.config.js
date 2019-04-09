@@ -1,7 +1,11 @@
 const path = require('path')
 
-// This is a dummy config to help IntelliJ resolve path aliases
 module.exports = {
+  optimization: {
+    splitChunks: {
+      chunks: 'async'
+    }
+  },
   resolve: {
     extensions: ['.js', '.json', '.vue'],
     alias: {

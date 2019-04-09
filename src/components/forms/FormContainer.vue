@@ -10,9 +10,18 @@ import set from 'lodash.set'
 import clone from 'lodash.clonedeep'
 
 @Component({
-  reactiveProvide: {
-    name: 'form',
-    include: ['config', 'name', 'localData', 'errors', 'setValue', 'loading']
+  provide() {
+    const form = {}
+    const includes = ['config', 'name', 'localData', 'errors', 'setValue', 'loading']
+
+    for (let i of includes) {
+      Object.defineProperty(form, i, {
+        enumerable: true,
+        get: () => this[i]
+      })
+    }
+
+    return { form }
   }
 })
 export default class FormContainer extends Vue {

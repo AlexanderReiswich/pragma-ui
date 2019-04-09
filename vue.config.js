@@ -2,12 +2,9 @@ const path = require('path')
 
 module.exports = {
   configureWebpack: {
-    output: {
-      libraryExport: 'default'
-    },
     optimization: {
       splitChunks: {
-        chunks: 'all'
+        chunks: 'async'
       }
     },
     resolve: {

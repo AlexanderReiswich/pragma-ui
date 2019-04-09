@@ -1,15 +1,15 @@
 <template>
   <label
     class="push-down-xs"
-    :class="input.labelClass"
-    :for="input.cId"
-    v-if="input.label !== false"
+    :class="inputField.labelClass"
+    :for="inputField.cId"
+    v-if="inputField.label !== false"
   >
     <span class="input-label">
-      {{ input.label ? input.label : humanize(input.name) }}
+      {{ inputField.label ? inputField.label : humanize(inputField.name) }}
     </span>
 
-    <span :class="suffixClass" v-text="suffix" v-if="input.required !== null" />
+    <span :class="suffixClass" v-text="suffix" v-if="inputField.required !== null" />
   </label>
 </template>
 
@@ -20,25 +20,33 @@ import { Vue, Component, Inject } from 'vue-property-decorator'
 export default class InputLabel extends Vue {
   @Inject() input
   @Inject({
-    from: 'form',
+    form: 'form',
     default: null
   })
   form
 
   get suffixClass() {
-    return this.input.required ? 'pui-input-required red' : 'pui-input-optional subtle'
+    return this.inputField.required ? 'pui-input-required red' : 'pui-input-optional subtle'
   }
 
   get suffix() {
     const config = this.form ? this.form.config : {}
 
     const requiredText =
-      typeof this.input.requiredText === 'undefined' ? config.requiredText : this.input.requiredText
+      typeof this.inputField.requiredText === 'undefined'
+        ? config.requiredText
+        : this.inputField.requiredText
 
     const optionalText =
-      typeof this.input.optionalText === 'undefined' ? config.optionalText : this.input.optionalText
+      typeof this.inputField.optionalText === 'undefined'
+        ? config.optionalText
+        : this.inputField.optionalText
 
-    return this.input.required ? requiredText : optionalText
+    return this.inputField.required ? requiredText : optionalText
+  }
+
+  get inputField() {
+    return this.input ? this.input : {}
   }
 
   /**

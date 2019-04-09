@@ -4,8 +4,6 @@ import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 
 dayjs.extend(LocalizedFormat)
 
-window.dayjs = dayjs
-
 /**
  * The Calendar mixin supplies the Calendar component with all the logic-related behaviors.
  */

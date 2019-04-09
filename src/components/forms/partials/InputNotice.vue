@@ -1,5 +1,5 @@
 <template>
-  <div class="push-v-s align-v" v-show="input.notice">
+  <div class="push-v-s align-v" v-show="inputField.notice">
     <tico
       name="info"
       color="muted"
@@ -7,7 +7,7 @@
       innerClass="border-l border-muted circular"
       class="inline push-right-s"
     />
-    <div class="muted">{{ input.notice }}</div>
+    <div class="muted">{{ inputField.notice }}</div>
   </div>
 </template>
 
@@ -22,5 +22,9 @@ import { Tico } from '@c/ui'
 })
 export default class InputNotice extends Vue {
   @Inject() input
+
+  get inputField() {
+    return this.input ? this.input : {}
+  }
 }
 </script>

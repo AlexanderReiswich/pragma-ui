@@ -20,7 +20,7 @@ import { FieldMixin } from '@c/forms/mixins'
 @Component
 export default class Submit extends Mixins(FieldMixin) {
   @Inject({
-    from: 'form',
+    form: 'form',
     default: null
   })
   form
