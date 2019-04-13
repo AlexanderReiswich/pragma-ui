@@ -21,6 +21,10 @@ import { Vue, Component } from 'vue-property-decorator'
 export default class App extends Vue {
   menu = [
     {
+      link: '/ui',
+      text: 'Ui'
+    },
+    {
       link: '/forms',
       text: 'Forms'
     },

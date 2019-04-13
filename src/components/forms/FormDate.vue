@@ -5,12 +5,19 @@
     :value="localValue ? localValue.format(storageFormat) : null"
     :extension="true"
     :transform="transformDate"
-    @extensionOpened="isOpen = true"
-    @extensionClosed="isOpen = false"
+    :isExtensionOpen="isOpen"
+    :toggleExtension="toggleExtension"
     @blur="onBlur"
   >
     <template v-slot:extension>
-      <calendar :value="localValue" :isOpen="isOpen" @updated="updateDate" />
+      <calendar-partial
+        :value="localValue"
+        :isOpen="isOpen"
+        :number="numberComponent"
+        :config="config"
+        :toggleExtension="toggleExtension"
+        @updated="updateDate"
+      />
     </template>
     <template v-slot:afterInput>
       <transition name="fade">
@@ -32,8 +39,9 @@
 <script>
 import { Component, Prop, Mixins } from 'vue-property-decorator'
 import { FieldMixin } from '@c/forms/mixins'
-import { Calendar } from '@c/forms/partials'
+import { CalendarPartial } from '@c/forms/partials'
 import FormInput from './FormInput'
+import { FormNumber } from '@c/forms'
 import { Tico } from '@c/ui'
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
@@ -46,13 +54,16 @@ dayjs.extend(LocalizedFormat)
 @Component({
   components: {
     FormInput,
-    Calendar,
+    CalendarPartial,
     Tico
   }
 })
 export default class FormDate extends Mixins(FieldMixin) {
   isOpen = false
   localValue = null
+
+  // We pass the number component as a prop to the calendar to prevent circular dependency issues
+  numberComponent = FormNumber
 
   /**
    * Format of the visible value in the input field.
@@ -78,6 +89,16 @@ export default class FormDate extends Mixins(FieldMixin) {
   get filteredProps() {
     const { name, visibleFormat, storageFormat, ...filteredProps } = this.$props
     return filteredProps
+  }
+
+  /**
+   * Open or close the dropdown extension.
+   *
+   * @param {boolean} state
+   * @return {void}
+   */
+  toggleExtension(state) {
+    this.isOpen = typeof state === 'undefined' ? !this.isOpen : state
   }
 
   /**
@@ -127,7 +148,7 @@ export default class FormDate extends Mixins(FieldMixin) {
 }
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 .pui-clear-date
   position absolute
   top 0

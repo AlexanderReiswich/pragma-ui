@@ -89,6 +89,15 @@ export default class FieldMixin extends Vue {
   }
 
   /**
+   * Retrieve the configuration options for this form.
+   *
+   * @returns object
+   */
+  get config() {
+    return this.cForm ? this.cForm.config : {}
+  }
+
+  /**
    * The computed id of this field.
    *
    * @returns string
@@ -171,7 +180,7 @@ export default class FieldMixin extends Vue {
    * @returns {void}
    */
   updateValue(e) {
-    const value = typeof e === 'object' && e.target ? e.target.value : e
+    const value = typeof e === 'object' && typeof e.target === 'object' ? e.target.value : e
 
     this.$emit('updated', value, this.cValue)
 

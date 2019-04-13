@@ -329,7 +329,7 @@ export default class FormNumber extends Mixins(FieldMixin) {
 }
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 .pui-number-button-container
   position absolute
   top 0

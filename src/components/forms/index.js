@@ -6,7 +6,7 @@ import FormSelect from './FormSelect'
 import FormDate from './FormDate'
 import FormRadio from './FormRadio'
 import FormCheckbox from './FormCheckbox'
-import Submit from './Submit'
+import FormSubmit from './FormSubmit'
 
 export {
   FormContainer,
@@ -17,5 +17,5 @@ export {
   FormDate,
   FormRadio,
   FormCheckbox,
-  Submit
+  FormSubmit
 }

@@ -136,7 +136,7 @@ export default class FormPassword extends Mixins(FieldMixin) {
 }
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 .pui-meter
   width 40%
 

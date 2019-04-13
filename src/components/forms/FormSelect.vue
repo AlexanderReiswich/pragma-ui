@@ -8,11 +8,11 @@
       ref="textfield"
       :value="localValue"
       :extension="true"
+      :isExtensionOpen="isOpen"
+      :toggleExtension="toggleExtension"
       :label="false"
       :readonly="!multiple"
       :inputClass="!searchable ? 'cursor-default' : ''"
-      @extensionOpened="isOpen = true"
-      @extensionClosed="isOpen = false"
       @keydown.native.prevent.up="traverse('up')"
       @keydown.native.prevent.down="traverse('down')"
       @keydown.native.prevent.enter="toggleOption(focusedEntry)"
@@ -20,7 +20,7 @@
     >
       <template v-slot:extension>
         <div class="pad-xs">
-          <form-select-entry
+          <form-select-partial
             v-for="option in filteredOptions"
             :key="option.value"
             :option="option"
@@ -32,14 +32,13 @@
       </template>
       <template v-slot:afterInput>
         <transition name="fade">
-          <div class="pui-select-button align-vh" :class="!multiple ? 'no-pointer-events' : ''">
+          <div class="pui-select-button align-vh no-pointer-events">
             <tico
               :name="selectionIcon(isOpen)"
               :color="isOpen ? 'primary' : 'muted'"
               :size="isOpen && multiple ? 'xl' : 'l'"
               :thin="true"
               class="inline pointer"
-              @click.native.prevent="clearSelection"
             />
           </div>
         </transition>
@@ -71,14 +70,14 @@ import { Component, Prop, Watch, Mixins } from 'vue-property-decorator'
 import { FieldMixin } from '@c/forms/mixins'
 import FormInput from './FormInput'
 import { Tico } from '@c/ui'
-import { InputLabel, FormSelectEntry } from '@c/forms/partials'
+import { InputLabel, FormSelectPartial } from '@c/forms/partials'
 
 @Component({
   components: {
     FormInput,
     Tico,
     InputLabel,
-    FormSelectEntry
+    FormSelectPartial
   }
 })
 export default class FormSelect extends Mixins(FieldMixin) {
@@ -151,11 +150,22 @@ export default class FormSelect extends Mixins(FieldMixin) {
   }
 
   /**
+   * Open or close the dropdown extension.
+   *
+   * @param {boolean} state
+   * @return {void}
+   */
+  toggleExtension(state) {
+    this.isOpen = typeof state === 'undefined' ? !this.isOpen : state
+  }
+
+  /**
    * Extract only the filtered options.
    */
   get filteredOptions() {
-    if (this.searchable) {
-      return this.options.filter(e => e.text.toLowerCase().includes(this.localValue.toLowerCase()))
+    if (this.searchable && this.localValue) {
+      const val = typeof this.localValue === 'string' ? this.localValue.toLowerCase() : null
+      return this.options.filter(e => e.text.toLowerCase().includes(val))
     }
     return this.options
   }
@@ -226,17 +236,6 @@ export default class FormSelect extends Mixins(FieldMixin) {
     const shiftUp = (i, o) => (o[i - 1] ? o[i - 1] : o[o.length - 1])
 
     this.focusedEntry = dir === 'down' ? shiftDown(index, o) : shiftUp(index, o)
-  }
-
-  /**
-   * Clear the selected date value.
-   *
-   * @return {void}
-   */
-  clearSelection() {
-    if (this.multiple) {
-      this.localValue = null
-    }
   }
 
   /**

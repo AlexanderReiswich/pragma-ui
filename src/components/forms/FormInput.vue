@@ -4,14 +4,12 @@
 
     <div class="input-block relative" :class="inputBlockClass">
       <popper
-        trigger="click"
+        trigger="custom"
         :disabled="!extension"
         :visible-arrow="false"
         :options="extensionOptions"
-        :force-show="isFocused || isExtensionOpen"
-        transition="popper-fade"
-        @show="openExtension"
-        @hide="closeExtension"
+        :force-show="isExtensionOpen"
+        transition="popper-slide"
         v-click-outside="closeExtension"
       >
         <input
@@ -43,12 +41,7 @@
         </div>
       </popper>
 
-      <slot
-        name="afterInput"
-        :updateValue="updateValue"
-        :cValue="cValue"
-        :isExtensionOpen="isExtensionOpen"
-      />
+      <slot name="afterInput" :updateValue="updateValue" :cValue="cValue" />
     </div>
 
     <slot name="afterInputContainer" />
@@ -63,7 +56,6 @@
 import { Component, Prop, Mixins } from 'vue-property-decorator'
 import { FieldMixin } from '@c/forms/mixins'
 import { InputLabel, InputErrors, InputNotice } from '@c/forms/partials'
-import Popper from 'vue-popperjs'
 import ClickOutside from 'vue-click-outside'
 
 @Component({
@@ -71,7 +63,7 @@ import ClickOutside from 'vue-click-outside'
     InputLabel,
     InputErrors,
     InputNotice,
-    Popper
+    Popper: () => import('@c/ui/Popper')
   },
   directives: {
     ClickOutside
@@ -94,14 +86,26 @@ export default class FormInput extends Mixins(FieldMixin) {
 
   @Prop(Boolean) extension
 
+  @Prop({
+    type: Boolean,
+    default: false
+  })
+  isExtensionOpen
+
   @Prop(Function) mask
 
   @Prop(Function) transform
 
   @Prop(Function) beforeKeyPress
 
-  isExtensionOpen = false
-  extensionPlacementClass = ''
+  @Prop(Function) toggleExtension
+
+  extensionClass = ''
+  extensionWidthMaps = {
+    xs: 300,
+    s: 400,
+    m: 500
+  }
 
   extensionOptions = {
     placement: 'bottom',
@@ -111,8 +115,11 @@ export default class FormInput extends Mixins(FieldMixin) {
       },
       shift: {
         fn: data => {
-          data.styles.maxWidth = this.$refs.container.offsetWidth + 'px'
-          this.setExtensionPlacementClass(data.placement)
+          const w = this.$refs.container.offsetWidth
+
+          data.styles.maxWidth = w + 'px'
+          this.setExtensionClass(data.placement, w)
+
           return data
         }
       }
@@ -159,23 +166,16 @@ export default class FormInput extends Mixins(FieldMixin) {
    * @return string
    */
   get inputContainerClass() {
-    return this.extension && this.isExtensionOpen ? 'placement-' + this.extensionPlacementClass : ''
-  }
-
-  /**
-   * Open the popper dropdown extension.
-   */
-  openExtension() {
-    this.isExtensionOpen = true
-    this.$emit('extensionOpened')
+    return this.extensionClass
   }
 
   /**
    * Close the popper dropdown extension.
    */
   closeExtension() {
-    this.isExtensionOpen = false
-    this.$emit('extensionClosed')
+    if (this.isExtensionOpen) {
+      this.toggleExtension ? this.toggleExtension(false) : null
+    }
   }
 
   /**
@@ -188,10 +188,25 @@ export default class FormInput extends Mixins(FieldMixin) {
   }
 
   /**
-   * Save the placement of the popper dropdown extension for use in the container class.
+   * Add useful css classes to the popper dropdown extension depending on its state.
+   *
+   * @param {string} dir
+   * @param {int} w
    */
-  setExtensionPlacementClass(dir) {
-    this.extensionPlacementClass = dir
+  setExtensionClass(dir, w) {
+    const placement = 'placement-' + dir
+    const maps = this.extensionWidthMaps
+    let wC = 'popper-l'
+
+    if (w < maps.xs) {
+      wC = 'popper-xs'
+    } else if (w < maps.s) {
+      wC = 'popper-s'
+    } else if (w < maps.m) {
+      wC = 'popper-m'
+    }
+
+    this.extensionClass = placement + ' ' + wC
   }
 
   /**
@@ -206,6 +221,7 @@ export default class FormInput extends Mixins(FieldMixin) {
    */
   onFocus() {
     this.isFocused = true
+    this.toggleExtension ? this.toggleExtension(true) : null
   }
 
   /**

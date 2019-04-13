@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home'
+import Ui from './views/Ui'
 import Forms from './views/Forms'
 import DataLists from './views/DataLists'
 
@@ -14,6 +15,11 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/ui',
+      name: 'ui',
+      component: Ui
     },
     {
       path: '/forms',

@@ -101,9 +101,9 @@
 
         <h3 class="size-l bold push-down-s">Submit button</h3>
 
-        <submit class="btn ghost" spinnerClass="border-primary">
+        <form-submit class="btn ghost" spinnerClass="border-primary">
           Submit form
-        </submit>
+        </form-submit>
       </template>
     </form-container>
   </div>
@@ -118,7 +118,7 @@ import * as FormComponents from '@c/forms'
     ...FormComponents
   }
 })
-export default class Forms extends Vue {
+export default class FormsPage extends Vue {
   @Prop(String) msg
 
   submittedData = null

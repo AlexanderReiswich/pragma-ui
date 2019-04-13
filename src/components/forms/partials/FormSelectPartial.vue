@@ -2,7 +2,7 @@
   <div class="full">
     <a
       href="#"
-      class="pui-form-select-entry block pad-s"
+      class="pui-form-select-partial block pad-s"
       :class="itemClass"
       @click.prevent="$emit('select', option)"
     >
@@ -27,7 +27,7 @@ import { Tico } from '@c/ui'
     Tico
   }
 })
-export default class FormSelectEntry extends Vue {
+export default class FormSelectPartial extends Vue {
   @Prop(Object) option
   @Prop([String, Number, Object, Array]) value
   @Prop(Boolean) focused

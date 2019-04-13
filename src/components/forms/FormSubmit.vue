@@ -18,7 +18,7 @@ import { Component, Prop, Inject, Mixins } from 'vue-property-decorator'
 import { FieldMixin } from '@c/forms/mixins'
 
 @Component
-export default class Submit extends Mixins(FieldMixin) {
+export default class FormSubmit extends Mixins(FieldMixin) {
   @Inject({
     form: 'form',
     default: null

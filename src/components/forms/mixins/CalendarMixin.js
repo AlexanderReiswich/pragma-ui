@@ -31,7 +31,9 @@ export default class CalendarMixin extends Vue {
    * }
    */
   get localeData() {
-    return dayjs[this.locale]
+    return this.config && this.config.calendarLocale
+      ? this.config.calendarLocale
+      : dayjs[this.locale]
   }
 
   /**
@@ -172,9 +174,9 @@ export default class CalendarMixin extends Vue {
     const c = [day.pos === 'current' ? this.activeMonthClass : this.inactiveMonthClass]
 
     if (day.date.isSame(this.sD, 'day')) {
-      c.push('selected-day', this.dayClass)
+      c.push('selected-day', this.activeDayClass)
     } else {
-      c.push(this.activeDayClass)
+      c.push(this.dayClass)
 
       if (this.getDayClassName(day) === 'sunday') {
         c.push('red')

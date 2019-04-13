@@ -31,7 +31,13 @@ export default class FormContainer extends Vue {
     submitText: 'Save',
     securityLabelWeak: 'Weak',
     securityLabelModerate: 'Moderate',
-    securityLabelStrong: 'Strong'
+    securityLabelStrong: 'Strong',
+    setYearText: 'Set year',
+    cancelText: 'Cancel',
+    monthSelectionText: 'Month selection',
+    setDateText: 'Save',
+    setTodayText: 'Today',
+    calendarLocale: null
   }
   config = {}
   localData = {}

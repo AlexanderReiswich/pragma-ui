@@ -1,6 +1,6 @@
 <template>
-  <div class="pui-calendar pad-s">
-    <div class="space-around wrap pad-up-m push-h-s no-select">
+  <div class="pui-calendar">
+    <div class="pui-calendar-header pad-s space-around wrap no-select">
       <div class="center push-s">
         <tico
           name="chevron-left"
@@ -35,7 +35,7 @@
           @click.native.prevent="goToYear(1, 'prev')"
         />
 
-        <div class="pui-calendar-label year-label inline small uppercase extend-m">
+        <div class="inline">
           <popper
             trigger="click"
             transition="popper-fade"
@@ -43,24 +43,35 @@
             leave-active-class="popper-fade-leave popper-fade-leave-active"
             :options="yearPopperOptions"
             :force-show="selectingYear"
+            v-click-outside="closeYearSelection"
           >
-            <a class="pointer" slot="reference" @click="selectingYear = true">
+            <a
+              class="pui-calendar-label pui-year-label inline small uppercase extend-m pointer"
+              slot="reference"
+              @click="selectingYear = true"
+            >
               {{ vD.format('YYYY') }}
             </a>
             <div class="popper with-arrow">
               <div class="popper-inner white-bg shadow-m rounded-m">
-                <form-number
-                  :value="selectedYear"
-                  :min="selectedYear - 1000"
-                  :max="selectedYear + 1000"
-                  @updated="setYearDirectInput"
-                />
-                <div class="push-up-m space-around align-v">
-                  <button class="btn push-right" v-text="'Set year'" @click.prevent="setYear" />
+                <div class="align-left space-between wrap align-h pad-m">
+                  <component
+                    :is="number"
+                    :value="selectedYear"
+                    :min="selectedYear - 1000"
+                    :max="selectedYear + 1000"
+                    @updated="setYearDirectInput"
+                    class="pui-year-selection-input push-down-m"
+                  />
                   <button
-                    class="btn blank muted"
+                    class="btn push-h-auto"
+                    v-text="config.setYearText"
+                    @click.prevent="setYear"
+                  />
+                  <button
+                    class="btn blank muted push-h-auto"
                     @click.prevent="selectingYear = false"
-                    v-text="'Cancel'"
+                    v-text="config.cancelText"
                   />
                 </div>
               </div>
@@ -76,18 +87,9 @@
           @click.native.prevent="goToYear(1, 'next')"
         />
       </div>
-      <a
-        href="#"
-        class="pui-today-label push-s muted small uppercase extend-m"
-        @click.prevent="setDate()"
-      >
-        Today
-      </a>
     </div>
 
-    <br />
-
-    <div class="flex wrap">
+    <div class="flex wrap pad-s">
       <div
         class="pui-day-names pui-day-column center align-vh"
         v-for="day in dayNames"
@@ -113,9 +115,7 @@
 
     <div class="pui-selection-overlay" v-show="selectingMonth">
       <div class="pui-months-overview" v-show="selectingMonth">
-        <div class="pui-months-overview-title full bold">
-          Month selection
-        </div>
+        <div class="pui-months-overview-title full bold" v-text="config.monthSelectionText" />
         <a
           v-for="(month, index) in monthNames"
           :key="month"
@@ -128,6 +128,20 @@
         </a>
       </div>
     </div>
+
+    <div class="pui-calendar-footer pad-s space-between">
+      <a
+        href="#"
+        class="pui-today-label push-s muted small uppercase extend-m"
+        @click.prevent="setDate(null)"
+        v-text="config.setTodayText"
+      />
+      <button
+        class="pui-set-date-btn btn push-h-s"
+        v-text="config.setDateText"
+        @click.prevent="submitCalendar"
+      />
+    </div>
   </div>
 </template>
 
@@ -135,7 +149,7 @@
 import { Component, Prop, Watch, Mixins } from 'vue-property-decorator'
 import { CalendarMixin } from '@c/forms/mixins'
 import { Tico } from '@c/ui'
-import Popper from 'vue-popperjs'
+import ClickOutside from 'vue-click-outside'
 
 /**
  * The Calendar component displays an interactive UI for date selection.
@@ -143,16 +157,18 @@ import Popper from 'vue-popperjs'
 @Component({
   components: {
     Tico,
-    Popper,
-    FormNumber: () => import('@c/forms/FormNumber') // Dynamic import to prevent circular reference
+    Popper: () => import('@c/ui/Popper')
   },
   filters: {
     shortMonth(m) {
       return m.slice(0, 3)
     }
+  },
+  directives: {
+    ClickOutside
   }
 })
-export default class Calendar extends Mixins(CalendarMixin) {
+export default class CalendarPartial extends Mixins(CalendarMixin) {
   @Prop({
     type: String,
     default: 'en'
@@ -160,15 +176,26 @@ export default class Calendar extends Mixins(CalendarMixin) {
   locale
 
   @Prop(Object) value
+  @Prop(Object) config
   @Prop(Boolean) isOpen
+  @Prop(Function) number
+  @Prop(Function) toggleExtension
 
   selectingMonth = false
   selectingYear = false
-  dayClass = 'primary-bg white'
-  activeDayClass = 'light-bg-on-hover pointer'
+  dayClass = 'pui-active-day light-bg-on-hover pointer'
+  activeDayClass = 'pui-day primary-bg white'
   activeMonthClass = 'pui-active-month'
   inactiveMonthClass = 'pui-inactive-month opacity-25'
   yearDirectInput = null
+  yearPopperOptions = {
+    placement: 'bottom',
+    modifiers: {
+      flip: {
+        behavior: ['bottom', 'top']
+      }
+    }
+  }
 
   /**
    * If the calendar popup is closed, make sure to also close the year selection.
@@ -187,7 +214,7 @@ export default class Calendar extends Mixins(CalendarMixin) {
   /**
    * If the date value has been changed, update the local date objects.
    *
-   * @param {Boolean} date
+   * @param {Object} date
    */
   @Watch('value', {
     immediate: true
@@ -230,6 +257,15 @@ export default class Calendar extends Mixins(CalendarMixin) {
   }
 
   /**
+   * Close the year selection view.
+   */
+  closeYearSelection() {
+    if (this.selectingYear) {
+      this.selectingYear = false
+    }
+  }
+
+  /**
    * Update the local direct input year value.
    */
   setYearDirectInput(value) {
@@ -244,13 +280,12 @@ export default class Calendar extends Mixins(CalendarMixin) {
     this.selectingYear = false
   }
 
-  yearPopperOptions = {
-    placement: 'bottom',
-    modifiers: {
-      flip: {
-        behavior: ['bottom', 'top']
-      }
-    }
+  /**
+   * Set the selected date and close the calendar.
+   */
+  submitCalendar() {
+    this.setDate(this.vD)
+    this.toggleExtension ? this.toggleExtension(false) : null
   }
 
   mounted() {
@@ -259,18 +294,45 @@ export default class Calendar extends Mixins(CalendarMixin) {
 }
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 .pui-calendar
   width auto
   max-width 480px
 
+.pui-calendar .popper
+  width auto
+
+.pui-calendar-header
+  padding-top 4%
+  padding-bottom 2%
+
+.pui-calendar-footer
+  padding-bottom 4%
+
 .pui-day-column
   width 14%
-  height 60px
+  height 54px
+
+.popper-m .pui-day-column
+  height 50px
+
+.popper-s .pui-day-column
+  height 44px
+
+.popper-xs .pui-day-column
+  height 34px
 
 .pui-day-column div
   width 40px
   height 40px
+
+.popper-s .pui-day-column div
+  width 38px
+  height 38px
+
+.popper-xs .pui-day-column div
+  width 36px
+  height 36px
 
 .pui-calendar-label
   width 60px
@@ -296,4 +358,8 @@ export default class Calendar extends Mixins(CalendarMixin) {
 .pui-months-overview > a
   width 30%
   box-sizing border-box
+
+.pui-year-selection-input
+  min-width 260px
+  max-width 300px
 </style>
