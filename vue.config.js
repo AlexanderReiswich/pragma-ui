@@ -2,9 +2,14 @@ const path = require('path')
 
 module.exports = {
   css: {
-    extract: false
+    extract: true
   },
   configureWebpack: {
+    devServer: {
+      watchOptions: {
+        poll: true
+      }
+    },
     optimization: {
       splitChunks: {
         chunks: 'async'

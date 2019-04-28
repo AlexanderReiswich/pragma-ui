@@ -5,7 +5,7 @@ faker.locale = 'de'
 
 const users = []
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 125; i++) {
   users.push({
     username: faker.name.findName(),
     email: faker.internet.email(),

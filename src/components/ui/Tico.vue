@@ -27,10 +27,6 @@ export default class Tico extends Vue {
       classes.push(this.color)
     }
 
-    if (this.thin) {
-      classes.push('tico-thin')
-    }
-
     return classes.join(' ')
   }
 
@@ -39,6 +35,10 @@ export default class Tico extends Vue {
 
     if (this.innerClass) {
       classes.push(this.innerClass)
+    }
+
+    if (this.thin) {
+      classes.push('tico-thin')
     }
 
     return classes.join(' ')
