@@ -35,12 +35,7 @@ import { InputLabel, InputErrors, InputNotice } from '@c/forms/partials'
   }
 })
 export default class FormCheckbox extends Mixins(FieldMixin) {
-  @Prop({
-    type: String,
-    default: 'm'
-  })
-  size
-
+  @Prop(String) size
   @Prop(Boolean) switch
   @Prop(String) labelClass
   @Prop(String) indicatorClass
@@ -63,14 +58,17 @@ export default class FormCheckbox extends Mixins(FieldMixin) {
 
   /**
    * Set the classes for the indicator element based on the desired checkbox size.
-   * If the indicatorClass prop is supplied directly, a size class won't be set automatically.
+   * If the indicatorClass prop is supplied directly, a size class won't be set automatically unless its set explicitly.
    *
    * @return string
    */
   get cIndicatorClass() {
     let c = [this.switch ? 'switch-indicator' : 'checkbox-indicator']
+    const size = this.size ? this.size : 'm'
 
-    c.push(this.indicatorClass ? this.indicatorClass : 'size-' + this.size)
+    c.push(this.indicatorClass ? this.indicatorClass : 'size-' + size)
+
+    if (this.indicatorClass && this.size) c.push('size-' + size)
 
     return c.join(' ')
   }
@@ -95,7 +93,9 @@ export default class FormCheckbox extends Mixins(FieldMixin) {
       xl: '2xl'
     }
 
-    return 'inline size-' + (sizes[this.size] ? sizes[this.size] : 'l')
+    const size = this.size ? this.size : 'm'
+
+    return 'inline size-' + (sizes[size] ? sizes[size] : 'l')
   }
 
   updateField() {
