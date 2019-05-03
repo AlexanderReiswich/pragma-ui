@@ -176,7 +176,7 @@ export default class FieldMixin extends Vue {
    * The updateValue method updates this fields value within the parent forms localData.
    * Emits an "updated" event with the new and old value as attributes
    *
-   * @param {Event} e
+   * @param {Event|Boolean|String} e
    * @returns {void}
    */
   updateValue(e) {

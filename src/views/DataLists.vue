@@ -17,7 +17,7 @@
 <script>
 import { Vue, Component } from 'vue-property-decorator'
 import { DataTable } from '@c/datalist'
-import fakeUsers from '@c/helpers/sampleUsers'
+import createSampleUsers from '@c/helpers/createSampleUsers'
 
 @Component({
   components: {
@@ -26,8 +26,8 @@ import fakeUsers from '@c/helpers/sampleUsers'
 })
 export default class DataListsPage extends Vue {
   config = {
-    itemsPerPage: 20,
-    paginationSpread: 3,
+    itemsPerPage: 10,
+    paginationSpread: 1,
     showAllItemsButton: true,
     currentPage: 1,
     searchText: 'Search'
@@ -88,7 +88,7 @@ export default class DataListsPage extends Vue {
 
   mounted() {
     setTimeout(() => {
-      this.table.body = fakeUsers
+      this.table.body = createSampleUsers(988)
       this.loading = false
     }, 1000)
   }

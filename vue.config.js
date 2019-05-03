@@ -5,11 +5,6 @@ module.exports = {
     extract: true
   },
   configureWebpack: {
-    devServer: {
-      watchOptions: {
-        poll: true
-      }
-    },
     optimization: {
       splitChunks: {
         chunks: 'async'

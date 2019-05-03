@@ -62,7 +62,12 @@
 
         <div class="grid gap-m push-down-l">
           <div class="col s12 push-down-m">
-            <form-radio name="gender" :options="genderOptions" defaultValue="m" />
+            <form-radio
+              name="gender"
+              :options="genderOptions"
+              defaultValue="m"
+              @updated="checkValueOnUpdate"
+            />
           </div>
         </div>
 
@@ -70,12 +75,12 @@
 
         <div class="grid gap-m push-down-l">
           <div class="col s12 m6 push-down-m">
-            <form-checkbox name="agree">
+            <form-checkbox name="agree" @updated="checkValueOnUpdate">
               I agree to the terms of service
             </form-checkbox>
           </div>
           <div class="col s12 m6 push-down-m">
-            <form-checkbox name="remember_me" :switch="true">
+            <form-checkbox name="remember_me" :switch="true" @updated="checkValueOnUpdate">
               Keep me signed in
             </form-checkbox>
           </div>
@@ -200,6 +205,10 @@ export default class FormsPage extends Vue {
       text: 'Other'
     }
   ]
+
+  checkValueOnUpdate(value, oldValue) {
+    console.log(value, oldValue)
+  }
 
   saveForm(data, { setLoading }) {
     setLoading(true)

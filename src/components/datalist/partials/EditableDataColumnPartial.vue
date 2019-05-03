@@ -1,32 +1,37 @@
 <template>
-  <form-container
-    :name="'datalist_edit_' + currentColumn"
-    :class="{ active: editingColumn === currentColumn }"
-    ref="editingForm"
-    @submit="($event, form) => toggleColumnEdit($event, form, { row, col: colName, key: rowKey })"
-  >
-    <button v-if="editingColumn !== currentColumn" class="full align-left pad-0" type="submit">
-      {{ column }} &nbsp;
-    </button>
-
-    <form-input
-      v-show="editingColumn === currentColumn"
-      ref="editingInput"
-      name="value"
-      :value="column"
-      :label="false"
-      :prevent-submit="false"
-      class="pui-edit-input"
-      input-class="v-xs h-s"
-      @beforeSubmit="submitEdit('enter')"
-      @keydown.native.tab="submitEdit('tab')"
-      @escape="cancelEditing"
-    />
-
-    <form-submit class="pui-edit-column tween" spinner-class="border-primary">
+  <div>
+    <div
+      v-show="editingColumn !== currentColumn"
+      class="full align-left pad-0"
+      @click="toggleColumnEdit"
+    >
+      {{ column }}
+    </div>
+    <div class="pui-edit-column tween" spinner-class="border-primary" @click="toggleColumnEdit">
       <tico :name="editingColumn === currentColumn ? 'check' : 'edit'" color="primary" size="xl" />
-    </form-submit>
-  </form-container>
+    </div>
+    <form-container
+      :name="'datalist_edit_' + currentColumn"
+      :class="{ active: editingColumn === currentColumn }"
+      ref="editingForm"
+      v-if="editingColumn === currentColumn"
+      @submit="($event, form) => submitColumnEdit($event, form, { row, col: colName, key: rowKey })"
+    >
+      <form-input
+        v-show="editingColumn === currentColumn"
+        ref="editingInput"
+        name="value"
+        :value="column"
+        :label="false"
+        :prevent-submit="false"
+        class="pui-edit-input"
+        input-class="v-xs h-s"
+        @beforeSubmit="submitEdit('enter')"
+        @keydown.native.tab="submitEdit('tab')"
+        @escape="cancelEditing"
+      />
+    </form-container>
+  </div>
 </template>
 
 <script>
@@ -86,29 +91,33 @@ export default class EditableDataColumnPartial extends Vue {
    *
    * @returns void
    */
-  async toggleColumnEdit({ value }, { setLoading }, { row, col, key }) {
-    const name = key + '_' + col
+  toggleColumnEdit() {
+    const name = this.rowKey + '_' + this.colName
 
-    if (name === this.editingColumn) {
-      // If this field was already active, attempt to save it
-      setLoading(true)
+    this.editingColumn === name ? this.$refs.editingForm.submit() : this.updateEditingColumn(name)
+  }
 
-      if (this.updateEntry) {
-        await this.updateEntry({ key, col, row, value })
-      }
+  /**
+   * Saves the currently edited column and closes it.
+   *
+   * @returns void
+   */
+  async submitColumnEdit({ value }, { setLoading }, { row, col, key }) {
+    // If this field was already active, attempt to save it
+    setLoading(true)
 
-      setLoading(false)
+    if (this.updateEntry) {
+      await this.updateEntry({ key, col, row, value })
+    }
 
-      // If the next column has been determined, set it to active
-      if (this.nextColumn) {
-        this.updateEditingColumn(this.nextColumn)
-        this.nextColumn = null
-      } else {
-        this.updateEditingColumn(null)
-      }
+    setLoading(false)
+
+    // If the next column has been determined, set it to active
+    if (this.nextColumn) {
+      this.updateEditingColumn(this.nextColumn)
+      this.nextColumn = null
     } else {
-      // Otherwise just activate the input field
-      this.updateEditingColumn(name)
+      this.updateEditingColumn(null)
     }
   }
 

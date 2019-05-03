@@ -27,7 +27,7 @@ export default class DatalistContainer extends Vue {
   @Prop({
     default: {
       itemsPerPage: 8,
-      paginationSpread: 3,
+      paginationSpread: 1,
       currentPage: 1,
       search: ''
     }
@@ -149,6 +149,8 @@ export default class DatalistContainer extends Vue {
    * @returns void
    */
   updateListConstraints() {
+    const c = this.config
+
     // Cache the indexes of all filtered entries
     const filteredEntries = []
 
@@ -164,18 +166,28 @@ export default class DatalistContainer extends Vue {
     }
 
     // Pick the entries that we want to display as determined by pagination constraints.
-    if (this.config.itemsPerPage) {
+    if (c.itemsPerPage) {
       // Determine the starting index for active entries.
-      const minIndex = (this.config.currentPage - 1) * this.config.itemsPerPage
+      const minIndex = (c.currentPage - 1) * c.itemsPerPage
 
       // We loop through all entries and cache the index of the ones that should be displayed.
       for (let i = 0, len = filteredEntries.length; i < len; i++) {
-        if (i >= minIndex) activeEntries.push(i)
-        if (activeEntries.length >= this.config.itemsPerPage) break
+        if (i >= minIndex) activeEntries.push(filteredEntries[i])
+        if (activeEntries.length >= c.itemsPerPage) break
       }
     } else {
       // If the itemsPerPage option isn't set, we assume that all filtered entries should be shown.
       activeEntries = filteredEntries
+    }
+
+    // The pagination is affected when entries are filtered out, which is why here we ensure that the last
+    // possible pagination index is limited by the total pagination count.
+    if (c.currentPage !== 1) {
+      const pageCount = c.itemsPerPage ? Math.ceil(filteredEntries.length / c.itemsPerPage) : 1
+
+      if (c.currentPage > pageCount) {
+        this.$emit('configUpdated', { ...this.config, currentPage: pageCount })
+      }
     }
 
     this.entriesData = {
