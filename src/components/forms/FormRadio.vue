@@ -1,20 +1,26 @@
 <template>
   <div class="radio-container">
     <template v-for="(item, index) in options">
-      <label :for="cId + '_' + index" class="radio" :class="cLabelClass" :key="item.value || index">
-        <input
-          type="radio"
-          :id="cId + '_' + index"
-          :name="name"
-          :value="item.value || item"
-          :checked="cValue === (item.value || item)"
-          :disabled="disabled || item.disabled"
-          @change="updateField"
-          ref="radio"
-        />
-        <div class="radio-indicator" :class="cIndicatorClass" />
-        <span :class="cTextClass" v-html="item.text" />
-      </label>
+      <div class="pui-radio-label inline push-right-l push-down" :key="item.value || index">
+        <label :for="cId + '_' + index" class="radio" :class="cLabelClass">
+          <div class="pui-cell">
+            <input
+              type="radio"
+              :id="cId + '_' + index"
+              :name="name"
+              :value="item.value || item"
+              :checked="cValue === (item.value || item)"
+              :disabled="disabled || item.disabled"
+              @change="updateField"
+              ref="radio"
+            />
+            <div class="radio-indicator" :class="cIndicatorClass" />
+          </div>
+          <div class="pui-cell">
+            <span :class="cTextClass" v-html="item.text" />
+          </div>
+        </label>
+      </div>
     </template>
 
     <input-errors />
@@ -59,7 +65,7 @@ export default class FormRadio extends Mixins(FieldMixin) {
       return this.labelClass
     }
 
-    return 'push-right-l'
+    return 'pui-double-column'
   }
 
   /**

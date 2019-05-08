@@ -50,15 +50,15 @@
                     class="pui-datatable-column relative"
                   >
                     <template v-if="head[colName] && head[colName].editable">
-                      <editable-data-column-partial
-                        :entriesData="entriesData"
+                      <datalist-editable-partial
+                        :activeEntries="entriesData.activeEntries"
                         :head="head"
                         :rowKey="rowKey"
                         :row="row"
                         :colName="colName"
-                        :column="column"
-                        :editingColumn="editingColumn"
-                        :updateEditingColumn="updateEditingColumn"
+                        :content="column"
+                        :editingEntry="editingEntry"
+                        :updateEditingEntry="updateEditingEntry"
                         :updateEntry="updateEntry"
                       />
                     </template>
@@ -84,19 +84,14 @@
 
 <script>
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import {
-  DatalistContainer,
-  PaginationPartial,
-  SortArrowPartial,
-  EditableDataColumnPartial
-} from './'
+import { DatalistContainer, PaginationPartial, SortArrowPartial, DatalistEditablePartial } from './'
 
 @Component({
   components: {
     DatalistContainer,
     PaginationPartial,
     SortArrowPartial,
-    EditableDataColumnPartial
+    DatalistEditablePartial
   }
 })
 export default class DataTable extends Vue {
@@ -108,7 +103,7 @@ export default class DataTable extends Vue {
   @Prop(Function) updateEntry
   @Prop(Boolean) loading
 
-  editingColumn = null
+  editingEntry = null
   defaultConfig = {
     searchLabelText: 'Search',
     searchPlaceholderText: 'Search...'
@@ -129,8 +124,8 @@ export default class DataTable extends Vue {
     this.lConfig = { ...this.defaultConfig, ...config }
   }
 
-  updateEditingColumn(val) {
-    this.editingColumn = val
+  updateEditingEntry(val) {
+    this.editingEntry = val
   }
 }
 </script>

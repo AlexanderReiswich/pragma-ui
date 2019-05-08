@@ -230,7 +230,8 @@ export default class FormInput extends Mixins(FieldMixin) {
    */
   onBlur() {
     this.isFocused = false
-    this.$emit('blur', this.$refs.input.value, this.cValue)
+    const newVal = this.$refs.input ? this.$refs.input.value : null
+    this.$emit('blur', newVal, this.cValue)
   }
 
   /**

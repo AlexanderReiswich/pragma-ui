@@ -1,13 +1,13 @@
 import DatalistContainer from './DatalistContainer'
 import PaginationPartial from './partials/PaginationPartial'
 import SortArrowPartial from './partials/SortArrowPartial'
-import EditableDataColumnPartial from './partials/EditableDataColumnPartial'
+import DatalistEditablePartial from './partials/DatalistEditablePartial'
 import DataTable from './DataTable'
 
 export {
   DatalistContainer,
   PaginationPartial,
   SortArrowPartial,
-  EditableDataColumnPartial,
+  DatalistEditablePartial,
   DataTable
 }

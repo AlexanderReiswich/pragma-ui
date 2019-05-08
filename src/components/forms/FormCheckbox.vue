@@ -1,19 +1,23 @@
 <template>
   <div class="checkbox-container">
-    <label :for="cId" class="checkbox" :class="cLabelClass">
-      <input
-        type="checkbox"
-        :id="cId"
-        :name="name"
-        :checked="cValue"
-        :disabled="disabled"
-        @change="updateField"
-        ref="checkbox"
-      />
-      <span :class="cIndicatorClass" />
-      <span :class="cTextClass">
-        <slot />
-      </span>
+    <label :for="cId" class="checkbox" :class="'pui-double-column ' + cLabelClass">
+      <div class="pui-cell">
+        <input
+          type="checkbox"
+          :id="cId"
+          :name="name"
+          :checked="cValue"
+          :disabled="disabled"
+          @change="updateField"
+          ref="checkbox"
+        />
+        <span :class="cIndicatorClass" />
+      </div>
+      <div class="pui-cell">
+        <span :class="cTextClass">
+          <slot />
+        </span>
+      </div>
     </label>
 
     <input-errors />
@@ -104,3 +108,12 @@ export default class FormCheckbox extends Mixins(FieldMixin) {
   }
 }
 </script>
+
+<style lang="stylus">
+.pui-double-column
+  display table-row
+
+.pui-double-column .pui-cell
+  display table-cell
+  vertical-align top
+</style>
