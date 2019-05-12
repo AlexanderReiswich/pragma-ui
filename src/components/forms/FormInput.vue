@@ -14,7 +14,7 @@
       >
         <input
           class="input"
-          :class="inputClass"
+          :class="cInputClass"
           :type="type"
           :value="dynValue"
           :id="cId"

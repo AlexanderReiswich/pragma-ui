@@ -36,6 +36,19 @@
           </div>
         </div>
 
+        <h3 class="size-l bold push-down-s">Textarea</h3>
+
+        <div class="grid gap-m push-down">
+          <div class="col s12 push-down-m">
+            <form-textarea
+              name="about_me"
+              placeholder="Tell us something about yourself..."
+              :rows="4"
+              :maxLength="200"
+            />
+          </div>
+        </div>
+
         <h3 class="size-l bold push-down-s">Select dropdown</h3>
 
         <div class="grid gap-m push-down">

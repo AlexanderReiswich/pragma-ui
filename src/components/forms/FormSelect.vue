@@ -16,6 +16,7 @@
       @keydown.native.prevent.up="traverse('up')"
       @keydown.native.prevent.down="traverse('down')"
       @keydown.native.prevent.enter="toggleOption(focusedEntry)"
+      @keydown.native.prevent.space="toggleOption(focusedEntry)"
       @updated="localValue = $event"
     >
       <template v-slot:extension>

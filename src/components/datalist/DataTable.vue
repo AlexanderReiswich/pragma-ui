@@ -13,7 +13,7 @@
 
       <template v-if="!loading">
         <label
-          class="block muted small bold push-down-xs"
+          class="pui-label block muted small bold push-down-xs"
           for="data-list"
           v-text="lConfig.searchLabelText"
         />

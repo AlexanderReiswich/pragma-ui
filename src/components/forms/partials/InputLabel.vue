@@ -1,6 +1,6 @@
 <template>
   <label
-    class="push-down-xs"
+    class="pui-label push-down-xs"
     :class="inputField.labelClass"
     :for="inputField.cId"
     v-if="inputField.label !== false"
