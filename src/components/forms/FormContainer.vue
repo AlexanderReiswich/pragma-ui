@@ -117,5 +117,14 @@ export default class FormContainer extends Vue {
     // Emit submit event
     this.$emit('submit', this.localData, form)
   }
+
+  beforeMount() {
+    if (this.$puiConfig) {
+      this.config = {
+        ...this.defaults,
+        ...this.$puiConfig
+      }
+    }
+  }
 }
 </script>

@@ -63,16 +63,14 @@
                     @updated="setYearDirectInput"
                     class="pui-year-selection-input push-down-m"
                   />
-                  <button
-                    class="btn push-h-auto"
-                    v-text="config.setYearText"
-                    @click.prevent="setYear"
-                  />
-                  <button
-                    class="btn blank muted push-h-auto"
-                    @click.prevent="selectingYear = false"
-                    v-text="config.cancelText"
-                  />
+                  <div class="space-between full">
+                    <button class="btn" v-text="config.setYearText" @click.prevent="setYear" />
+                    <button
+                      class="btn blank muted"
+                      @click.prevent="selectingYear = false"
+                      v-text="config.cancelText"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

@@ -3,10 +3,10 @@
     class="pui-label push-down-xs"
     :class="inputField.labelClass"
     :for="inputField.cId"
-    v-if="inputField.label !== false"
+    v-if="inputField.label !== false && labelText"
   >
     <span class="input-label">
-      {{ inputField.label ? inputField.label : humanize(inputField.name) }}
+      {{ labelText }}
     </span>
 
     <span :class="suffixClass" v-text="suffix" v-if="inputField.required !== null" />
@@ -47,6 +47,10 @@ export default class InputLabel extends Vue {
 
   get inputField() {
     return this.input ? this.input : {}
+  }
+
+  get labelText() {
+    return this.inputField.label ? this.inputField.label : this.humanize(this.inputField.name)
   }
 
   /**
