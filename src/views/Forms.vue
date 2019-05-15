@@ -91,6 +91,9 @@
             <form-checkbox name="agree" @updated="checkValueOnUpdate">
               I agree to the terms of service
             </form-checkbox>
+            <form-checkbox name="privacy" @updated="checkValueOnUpdate">
+              I have read the privacy policy
+            </form-checkbox>
           </div>
           <div class="col s12 m6 push-down-m">
             <form-checkbox name="remember_me" :switch="true" @updated="checkValueOnUpdate">

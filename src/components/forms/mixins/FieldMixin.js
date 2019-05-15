@@ -73,6 +73,7 @@ export default class FieldMixin extends Vue {
   @Prop(Boolean) loading
 
   localValue = null
+  hash = Math.random().toString(36).substring(2, 10)
 
   get cForm() {
     return this.form ? this.form : null
@@ -103,12 +104,7 @@ export default class FieldMixin extends Vue {
    * @returns string
    */
   get cId() {
-    const name =
-      Math.random()
-        .toString(36)
-        .substring(2, 10) || this.name
-
-    return this.id ? this.id : this.formName + '-' + name
+    return this.id ? this.id : this.formName + '-' + (this.name || this.hash)
   }
 
   /**
