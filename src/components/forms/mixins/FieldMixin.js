@@ -115,7 +115,7 @@ export default class FieldMixin extends Vue {
    * If nothing is found, the defaultValue prop will be used.
    * And if that isn't set either just an empty string will be returned.
    *
-   * @returns string
+   * @returns {any}
    */
   get cValue() {
     if (!this.isEmpty(this.value)) {
@@ -136,7 +136,11 @@ export default class FieldMixin extends Vue {
       return this.localValue
     }
 
-    return this.defaultValue || ''
+    if (this.defaultValue) {
+      return this.defaultValue || ''
+    }
+
+    return null
   }
 
   /**

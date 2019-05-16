@@ -88,7 +88,7 @@
 
         <div class="grid gap-m push-down-l">
           <div class="col s12 m6 push-down-m">
-            <form-checkbox name="agree" @updated="checkValueOnUpdate">
+            <form-checkbox name="agree" @updated="checkValueOnUpdate" class="push-down-s">
               I agree to the terms of service
             </form-checkbox>
             <form-checkbox name="privacy" @updated="checkValueOnUpdate">
