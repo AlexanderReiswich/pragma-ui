@@ -73,7 +73,9 @@ export default class FieldMixin extends Vue {
   @Prop(Boolean) loading
 
   localValue = null
-  hash = Math.random().toString(36).substring(2, 10)
+  hash = Math.random()
+    .toString(36)
+    .substring(2, 10)
 
   get cForm() {
     return this.form ? this.form : null
