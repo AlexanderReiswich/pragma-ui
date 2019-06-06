@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component } from 'vue-property-decorator'
 import * as UiComponents from '@c/ui'
 
 @Component({
@@ -28,97 +28,5 @@ import * as UiComponents from '@c/ui'
     ...UiComponents
   }
 })
-export default class UiPage extends Vue {
-  @Prop(String) msg
-
-  submittedData = null
-
-  formErrors = {
-    real_name: 'A single error message',
-    occupation: ['First error', 'Second error']
-  }
-
-  genderOptions = [
-    {
-      value: 'm',
-      text: 'Male'
-    },
-    {
-      value: 'f',
-      text: 'Female'
-    },
-    {
-      value: 'o',
-      text: 'Other'
-    }
-  ]
-
-  salutationOptions = [
-    {
-      value: 'mr',
-      text: 'Mr.'
-    },
-    {
-      value: 'mrs',
-      text: 'Mrs.'
-    },
-    {
-      value: 'dr',
-      text: 'Dr.'
-    }
-  ]
-
-  feedbackOptions = [
-    {
-      value: 'a',
-      text: 'Google'
-    },
-    {
-      value: 'b',
-      text: 'Recommendation from a friend'
-    },
-    {
-      value: 'c',
-      text: 'Online ad'
-    },
-    {
-      value: 'd',
-      text: 'Magazine article'
-    },
-    {
-      value: 'e',
-      text: 'Tech blog'
-    },
-    {
-      value: 'f',
-      text: 'Social Media'
-    },
-    {
-      value: 'g',
-      text: 'Newsletter'
-    },
-    {
-      value: 'h',
-      text: 'Product comparison service'
-    },
-    {
-      value: 'i',
-      text: 'Product Hunt'
-    },
-    {
-      value: 'j',
-      text: 'Other'
-    }
-  ]
-
-  saveForm(data, { setLoading }) {
-    setLoading(true)
-
-    // For demonstration purposes, we simulate an ajax call with a timeout
-    setTimeout(() => {
-      setLoading(false)
-      this.submittedData = data
-    }, 1000)
-  }
-}
+export default class UiPage extends Vue {}
 </script>
