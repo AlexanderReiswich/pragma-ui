@@ -18,6 +18,8 @@ Vue.use({
       monthSelectionText: 'Month selection',
       setDateText: 'Save',
       setTodayText: 'Today',
+      searchLabelText: 'Search',
+      searchPlaceholderText: 'Search...',
       calendarLocale: null
     }
   }

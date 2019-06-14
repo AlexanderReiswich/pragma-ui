@@ -25,6 +25,10 @@ import { Vue, Component } from 'vue-property-decorator'
 import { DataTable } from '@c/datalist'
 import createSampleUsers from '@c/helpers/createSampleUsers'
 import FormCheckbox from '@c/forms/FormCheckbox'
+import dayjs from 'dayjs'
+import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+
+dayjs.extend(LocalizedFormat)
 
 @Component({
   components: {
@@ -40,7 +44,6 @@ export default class DataListsPage extends Vue {
     paginationSpread: 1,
     showAllItemsButton: true,
     currentPage: 1,
-    searchText: 'Search',
     showSearch: true,
     updated: null
   }
@@ -78,7 +81,10 @@ export default class DataListsPage extends Vue {
         include: null,
         exclude: null,
         type: 'date',
-        editable: true
+        editable: true,
+        mask: date => {
+          return dayjs(date).format('L')
+        }
       }
     },
     body: []

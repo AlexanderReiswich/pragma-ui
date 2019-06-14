@@ -123,7 +123,7 @@ export default class PaginationPartial extends Vue {
   })
   onConfigChanged(config) {
     // Merge the default config with the config prop
-    this.lConfig = { ...this.defaultConfig, ...config }
+    this.lConfig = { ...this.defaultConfig, ...this.$puiConfig, ...config }
   }
 
   get pageCount() {

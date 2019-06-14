@@ -60,14 +60,14 @@
                         :rowKey="rowKey"
                         :row="row"
                         :colName="colName"
-                        :content="column"
+                        :content="head[colName].mask ? head[colName].mask(column) : column"
                         :editingEntry="editingEntry"
                         :updateEditingEntry="updateEditingEntry"
                         :updateEntry="updateEntry"
                       />
                     </template>
                     <template v-else>
-                      {{ column }}
+                      {{ head[colName].mask ? head[colName].mask(column) : column }}
                     </template>
                   </td>
                 </tr>
@@ -125,8 +125,8 @@ export default class DataTable extends Vue {
     deep: true
   })
   onConfigChanged(config) {
-    // Merge the default config with the config prop
-    this.lConfig = { ...this.defaultConfig, ...config }
+    // Merge the default config with the global configuration and the config prop
+    this.lConfig = { ...this.defaultConfig, ...this.$puiConfig, ...config }
   }
 
   updateEditingEntry(val) {
