@@ -36,6 +36,8 @@ export default class DatalistContainer extends Vue {
   @Prop(Object) head
   @Prop(Array) body
 
+  @Prop(Function) customFilter
+
   /**
    * Whenever the config data changes, we initiate the updateListConstraints method so that only the desired entries
    * get displayed.
@@ -231,6 +233,12 @@ export default class DatalistContainer extends Vue {
    */
   filterDataset(item) {
     if (!item) return false
+
+    if (this.customFilter) {
+      const check = this.customFilter(item)
+
+      if (!check) return false
+    }
 
     for (const [name, column] of Object.entries(this.head)) {
       if (column.searchable) {

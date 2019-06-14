@@ -1,11 +1,17 @@
 <template>
   <div>
     <h3 class="size-l bold push-down-l">Data lists</h3>
+
+    <form-checkbox name="filter_gmail" :switch="true" @updated="setGmailFilter" class="push-down">
+      Display only gmail addresses
+    </form-checkbox>
+
     <data-table
       class="push-down"
       :head="table.head"
       :body="table.body"
       :config="config"
+      :custom-filter="customFilter"
       :save-head-data="saveHeadData"
       :update-config="updateConfig"
       :update-entry="updateEntry"
@@ -18,19 +24,25 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { DataTable } from '@c/datalist'
 import createSampleUsers from '@c/helpers/createSampleUsers'
+import FormCheckbox from '@c/forms/FormCheckbox'
 
 @Component({
   components: {
+    FormCheckbox,
     DataTable
   }
 })
 export default class DataListsPage extends Vue {
+  filterByGmail = false
+
   config = {
     itemsPerPage: 10,
     paginationSpread: 1,
     showAllItemsButton: true,
     currentPage: 1,
-    searchText: 'Search'
+    searchText: 'Search',
+    showSearch: true,
+    updated: null
   }
 
   table = {
@@ -74,6 +86,14 @@ export default class DataListsPage extends Vue {
 
   loading = true
 
+  setGmailFilter(value) {
+    this.filterByGmail = value
+
+    // To let the datalist know that it should update now, we fill the "updated" property inside of the config object
+    // with the current timestamp. Since config is being observed, an update will be forced.
+    this.config.updated = Date.now()
+  }
+
   saveHeadData(data) {
     this.table.head = data
   }
@@ -84,6 +104,13 @@ export default class DataListsPage extends Vue {
 
   async updateEntry({ key, col, value }) {
     this.table.body[key][col] = value
+  }
+
+  customFilter(item) {
+    if (this.filterByGmail) {
+      return item.email.includes('gmail')
+    }
+    return true
   }
 
   mounted() {

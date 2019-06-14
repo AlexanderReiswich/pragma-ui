@@ -37,7 +37,10 @@ import get from 'lodash.get'
   }
 })
 export default class FieldMixin extends Vue {
-  @Inject() form
+  @Inject({
+    default: null
+  })
+  form
 
   @Prop(String) id
 

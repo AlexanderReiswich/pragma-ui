@@ -3,6 +3,7 @@
     :head="head"
     :body="body"
     :config="lConfig"
+    :customFilter="customFilter"
     @headUpdated="saveHeadData"
     @configUpdated="updateConfig"
   >
@@ -12,21 +13,24 @@
       </div>
 
       <template v-if="!loading">
-        <label
-          class="pui-label block muted small bold push-down-xs"
-          for="data-list"
-          v-text="lConfig.searchLabelText"
-        />
-        <input
-          id="data-list"
-          class="narrow"
-          type="text"
-          :placeholder="lConfig.searchPlaceholderText"
-          @input="setSearch"
-          @keydown.enter="setSearch"
-        />
+        <template v-if="lConfig.showSearch">
+          <label
+            class="pui-label block muted small bold push-down-xs"
+            for="data-list"
+            v-text="lConfig.searchLabelText"
+          />
+          <input
+            id="data-list"
+            class="narrow push-down"
+            type="text"
+            :placeholder="lConfig.searchPlaceholderText"
+            @input="setSearch"
+            @keydown.enter="setSearch"
+          />
+        </template>
+
         <div class="pui-datatable-container">
-          <table class="push-up">
+          <table>
             <thead>
               <tr>
                 <th v-for="(column, key) in columns" :key="key">
@@ -101,6 +105,7 @@ export default class DataTable extends Vue {
   @Prop(Function) saveHeadData
   @Prop(Function) updateConfig
   @Prop(Function) updateEntry
+  @Prop(Function) customFilter
   @Prop(Boolean) loading
 
   editingEntry = null
