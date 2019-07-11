@@ -1,6 +1,6 @@
 {
   "name": "pragma-ui",
-  "version": "0.1.96",
+  "version": "0.1.97",
   "description": "A PragmaCSS-based set of UI elements",
   "license": "MIT",
   "keywords": [
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "current-script-polyfill": "^1.0.0",
-    "dayjs": "^1.8.14",
+    "dayjs": "^1.8.15",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.isequal": "^4.5.0",
@@ -32,27 +32,27 @@
     "popper.js": "^1.15.0"
   },
   "peerDependencies": {
-    "dayjs": "^1.8.14"
+    "dayjs": "^1.8.15"
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.4.4",
     "@fullhuman/postcss-purgecss": "^1.2.0",
-    "@vue/cli-plugin-babel": "^3.7.0",
-    "@vue/cli-plugin-eslint": "^3.7.0",
-    "@vue/cli-service": "^3.7.0",
+    "@vue/cli-plugin-babel": "^3.9.2",
+    "@vue/cli-plugin-eslint": "^3.9.2",
+    "@vue/cli-service": "^3.9.2",
     "@vue/eslint-config-prettier": "^4.0.1",
     "animejs": "^3.0.1",
-    "autoprefixer": "^9.5.1",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.2.2",
+    "autoprefixer": "^9.6.1",
+    "babel-eslint": "^10.0.2",
+    "eslint": "^6.0.1",
+    "eslint-plugin-vue": "^5.2.3",
     "faker": "^4.1.0",
-    "postcss-preset-env": "^6.6.0",
-    "pragma-css": "^0.7.61",
+    "postcss-preset-env": "^6.7.0",
+    "pragma-css": "^0.7.62",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-property-decorator": "^8.1.1",
-    "vue-router": "^3.0.6",
+    "vue-router": "^3.0.7",
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {
