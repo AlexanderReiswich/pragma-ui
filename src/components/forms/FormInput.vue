@@ -9,7 +9,8 @@
         :visible-arrow="false"
         :options="extensionOptions"
         :force-show="isExtensionOpen"
-        transition="popper-slide"
+        :before-hide="onPopperHide"
+        @show="onPopperShow"
         v-click-outside="closeExtension"
       >
         <input
@@ -35,7 +36,7 @@
         />
 
         <div class="popper" ref="popper" v-show="extension">
-          <div class="popper-inner white-bg shadow-m">
+          <div class="popper-inner white-bg shadow-m" ref="popperInner">
             <slot name="extension" />
           </div>
         </div>
@@ -57,6 +58,7 @@ import { Component, Prop, Mixins } from 'vue-property-decorator'
 import { FieldMixin } from '@c/forms/mixins'
 import { InputLabel, InputErrors, InputNotice } from '@c/forms/partials'
 import ClickOutside from 'vue-click-outside'
+import anime from 'animejs'
 
 @Component({
   components: {
@@ -108,14 +110,17 @@ export default class FormInput extends Mixins(FieldMixin) {
   }
 
   extensionOptions = {
-    placement: 'bottom',
+    placement: 'bottom-end',
     modifiers: {
       flip: {
         behavior: ['bottom', 'top']
       },
+      preventOverflow: {
+        boundariesElement: window
+      },
       shift: {
         fn: data => {
-          const w = this.$refs.container.offsetWidth
+          const w = this.$refs.container ? this.$refs.container.offsetWidth : 0
 
           data.styles.maxWidth = w + 'px'
           this.setExtensionClass(data.placement, w)
@@ -124,6 +129,58 @@ export default class FormInput extends Mixins(FieldMixin) {
         }
       }
     }
+  }
+
+  getHeight(el) {
+    let i = 0
+
+    const poll = resolve => {
+      if (el.offsetHeight || i > 100) {
+        return resolve(el.offsetHeight)
+      }
+      i++
+      return setTimeout(() => poll(resolve), 1)
+    }
+    return new Promise(poll)
+  }
+
+  async onPopperShow() {
+    const el = this.$refs.popperInner
+
+    // Hide the element to prevent it from flashing
+    el.style.opacity = '0'
+
+    // Wait until the popper element was rendered and then retrieve its height
+    const elH = await this.getHeight(el)
+
+    el.style.opacity = '1'
+    el.style.height = '0'
+
+    anime({
+      targets: el,
+      easing: 'easeOutQuint',
+      duration: 400,
+      height: elH,
+      complete: () => {
+        delete this.$refs.popperInner.style.height
+      }
+    })
+  }
+
+  async onPopperHide(done) {
+    const el = this.$refs.popperInner
+
+    anime({
+      targets: el,
+      easing: 'easeInSine',
+      duration: 200,
+      height: '0',
+      opacity: '0',
+      complete: () => {
+        el.style.height = 'auto'
+        done()
+      }
+    })
   }
 
   isFocused = false
@@ -258,4 +315,7 @@ export default class FormInput extends Mixins(FieldMixin) {
 .input.extension-open
   position relative
   z-index 200001
+
+.input-block .popper-inner
+  overflow hidden
 </style>

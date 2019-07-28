@@ -1,6 +1,6 @@
 .popper-is-active
   position relative
-  z-index 200000
+  z-index 200003
 
 .popper
   width 100%
@@ -15,6 +15,9 @@
     background-color #fff
     transform rotate(45deg)
     z-index 1
+
+.popper-is-active .popper
+  z-index 200003
 
 .popper-inner
   max-height 98vh
@@ -94,8 +97,8 @@
   transform scaleY(1)
   transform-origin bottom
 
-.placement-bottom .popper-slide-enter-active .popper-inner,
-.placement-bottom .popper-slide-leave-active .popper-inner
+div[class*="placement-bottom"] .popper-slide-enter-active .popper-inner,
+div[class*="placement-bottom"] .popper-slide-leave-active .popper-inner
   transform-origin top
 
 .popper-slide-enter .popper-inner,

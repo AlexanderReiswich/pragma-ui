@@ -261,6 +261,7 @@ export default class FormSelect extends Mixins(FieldMixin) {
   right 0
   bottom 0
   width 40px
+  z-index 200003
 
 .pui-select-remove-item
   opacity 0.6

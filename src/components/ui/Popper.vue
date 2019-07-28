@@ -69,6 +69,10 @@ export default {
       type: String,
       default: ''
     },
+    beforeHide: {
+      type: Function,
+      default: null
+    },
     stopPropagation: {
       type: Boolean,
       default: false
@@ -103,7 +107,6 @@ export default {
     showPopper(value) {
       if (value) {
         this.isActive = true
-        this.$emit('show', this)
         if (this.popperJS) {
           this.popperJS.enableEventListeners()
         }
@@ -112,7 +115,6 @@ export default {
         if (this.popperJS) {
           this.popperJS.disableEventListeners()
         }
-        this.$emit('hide', this)
       }
     },
     forceShow: {
@@ -159,18 +161,31 @@ export default {
         event.preventDefault()
       }
       if (!this.forceShow) {
-        this.showPopper = !this.showPopper
+        this.showPopper = this.showPopper ? this.doClose() : this.doShow()
       }
     },
     doShow() {
-      this.showPopper = true
+      if (!this.showPopper) {
+        this.showPopper = true
+        this.$emit('show', this)
+      }
     },
     afterLeave() {
       this.isActive = false
       this.doDestroy()
     },
     doClose() {
-      this.showPopper = false
+      if (this.showPopper) {
+        if (this.beforeHide) {
+          this.beforeHide(() => {
+            this.showPopper = false
+            this.$emit('hide', this)
+          })
+        } else {
+          this.showPopper = false
+          this.$emit('hide', this)
+        }
+      }
     },
     doDestroy() {
       if (this.showPopper) {
@@ -224,7 +239,7 @@ export default {
       off(this.referenceElm, 'mouseout', this.onMouseOut)
       off(this.referenceElm, 'mouseover', this.onMouseOver)
       off(document, 'click', this.handleDocumentClick)
-      this.showPopper = false
+      this.doClose()
       this.doDestroy()
     },
     appendArrow(element) {
@@ -243,13 +258,13 @@ export default {
     onMouseOver() {
       clearTimeout(this._timer)
       this._timer = setTimeout(() => {
-        this.showPopper = true
+        this.doShow()
       }, this.delayOnMouseOver)
     },
     onMouseOut() {
       clearTimeout(this._timer)
       this._timer = setTimeout(() => {
-        this.showPopper = false
+        this.doClose()
       }, this.delayOnMouseOut)
     },
     handleDocumentClick(e) {
@@ -267,7 +282,7 @@ export default {
       if (this.forceShow) {
         return
       }
-      this.showPopper = false
+      this.doClose()
     },
     elementContains(elm, otherElm) {
       if (typeof elm.contains === 'function') {
