@@ -19,6 +19,7 @@ Vue.use({
       setDateText: 'Save',
       setTodayText: 'Today',
       searchLabelText: 'Search',
+      selectPlaceholderText: 'Select...',
       searchPlaceholderText: 'Search...',
       calendarLocale: null
     }

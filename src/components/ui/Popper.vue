@@ -6,6 +6,7 @@
       </span>
     </transition>
     <slot name="reference"></slot>
+    <slot name="extra"></slot>
   </span>
 </template>
 

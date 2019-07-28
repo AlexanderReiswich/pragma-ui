@@ -40,9 +40,11 @@
             <slot name="extension" />
           </div>
         </div>
-      </popper>
 
-      <slot name="afterInput" :updateValue="updateValue" :cValue="cValue" />
+        <template slot="extra">
+          <slot name="afterInput" :updateValue="updateValue" :cValue="cValue" />
+        </template>
+      </popper>
     </div>
 
     <slot name="afterInputContainer" />
@@ -108,6 +110,7 @@ export default class FormInput extends Mixins(FieldMixin) {
     s: 400,
     m: 500
   }
+  extensionPosition = ''
 
   extensionOptions = {
     placement: 'bottom-end',
@@ -135,7 +138,7 @@ export default class FormInput extends Mixins(FieldMixin) {
     let i = 0
 
     const poll = resolve => {
-      if (el.offsetHeight || i > 100) {
+      if ((el && el.offsetHeight) || i > 100) {
         return resolve(el.offsetHeight)
       }
       i++
@@ -147,40 +150,52 @@ export default class FormInput extends Mixins(FieldMixin) {
   async onPopperShow() {
     const el = this.$refs.popperInner
 
-    // Hide the element to prevent it from flashing
-    el.style.opacity = '0'
+    if (el) {
+      // Hide the element to prevent it from flashing
+      anime.set(el, { opacity: '0' })
 
-    // Wait until the popper element was rendered and then retrieve its height
-    const elH = await this.getHeight(el)
+      // Wait until the popper element was rendered and then retrieve its height
+      const elH = await this.getHeight(el)
+      const isTop = this.extensionPosition.includes('top')
 
-    el.style.opacity = '1'
-    el.style.height = '0'
+      anime.set(el, {
+        height: '0',
+        translateY: isTop ? elH : 0
+      })
 
-    anime({
-      targets: el,
-      easing: 'easeOutQuint',
-      duration: 400,
-      height: elH,
-      complete: () => {
-        delete this.$refs.popperInner.style.height
-      }
-    })
+      anime({
+        targets: el,
+        easing: 'easeOutQuint',
+        opacity: '1',
+        duration: 200,
+        height: elH,
+        translateY: 0,
+        complete: () => {
+          delete this.$refs.popperInner.style.height
+        }
+      })
+    }
   }
 
   async onPopperHide(done) {
     const el = this.$refs.popperInner
+    const elH = await this.getHeight(el)
+    const isTop = this.extensionPosition.includes('top')
 
-    anime({
-      targets: el,
-      easing: 'easeInSine',
-      duration: 200,
-      height: '0',
-      opacity: '0',
-      complete: () => {
-        el.style.height = 'auto'
-        done()
-      }
-    })
+    if (el) {
+      anime({
+        targets: el,
+        easing: 'easeInSine',
+        duration: 80,
+        height: '0',
+        opacity: '0',
+        translateY: isTop ? elH : 0,
+        complete: () => {
+          el.style.height = 'auto'
+          done()
+        }
+      })
+    }
   }
 
   isFocused = false
@@ -209,13 +224,7 @@ export default class FormInput extends Mixins(FieldMixin) {
    * @return string
    */
   get cInputClass() {
-    let c = [this.inputClass]
-
-    if (this.extension && this.isExtensionOpen) {
-      c.push('extension-open')
-    }
-
-    return c.join(' ')
+    return this.inputClass
   }
 
   /**
@@ -223,7 +232,13 @@ export default class FormInput extends Mixins(FieldMixin) {
    * @return string
    */
   get inputContainerClass() {
-    return this.extensionClass
+    let c = [this.extensionClass]
+
+    if (this.extension && this.isExtensionOpen) {
+      c.push('extension-open')
+    }
+
+    return c.join(' ')
   }
 
   /**
@@ -264,6 +279,7 @@ export default class FormInput extends Mixins(FieldMixin) {
       wC = 'popper-m'
     }
 
+    this.extensionPosition = placement
     this.extensionClass = placement + ' ' + wC
   }
 
@@ -312,10 +328,6 @@ export default class FormInput extends Mixins(FieldMixin) {
 </script>
 
 <style lang="stylus">
-.input.extension-open
-  position relative
-  z-index 200001
-
 .input-block .popper-inner
   overflow hidden
 </style>

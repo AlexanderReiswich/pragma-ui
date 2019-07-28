@@ -106,7 +106,7 @@ export default class FormSelect extends Mixins(FieldMixin) {
 
   @Prop({
     type: String,
-    default: 'Select...'
+    default: ''
   })
   placeholder
 
@@ -147,6 +147,11 @@ export default class FormSelect extends Mixins(FieldMixin) {
    */
   get filteredProps() {
     const { name, searchable, multiple, options, ...filteredProps } = this.$props
+
+    filteredProps.placeholder = this.$props.placeholder
+      ? this.$props.placeholder
+      : this.config.selectPlaceholderText
+
     return filteredProps
   }
 
@@ -204,13 +209,27 @@ export default class FormSelect extends Mixins(FieldMixin) {
 
     const value = getValue(selection.value, this.cValue, this.multiple)
 
-    // If multi-select is disabled, update the localValue with the selection
-    if (!this.multiple) {
-      const selected = this.options.find(item => item.value === value)
-      this.localValue = selected ? selected.text : ''
-    }
-
+    this.setLocalValue(value)
     this.updateValue(value)
+  }
+
+  /**
+   *  Update the localValue with the text value of the selected option.
+   *
+   * @param {Object} value
+   * @return {Boolean}
+   */
+  setLocalValue(value) {
+    if (!this.multiple) {
+      const selected = value ? this.options.find(item => item.value === value) : null
+
+      if (selected) {
+        this.localValue = selected.text
+      } else {
+        const defaultValue = this.options.find(item => item.value === this.defaultValue)
+        this.localValue = defaultValue ? defaultValue.text : ''
+      }
+    }
   }
 
   /**
@@ -251,6 +270,10 @@ export default class FormSelect extends Mixins(FieldMixin) {
     }
     return isFocused ? 'chevron-up' : 'chevron-down'
   }
+
+  mounted() {
+    this.setLocalValue()
+  }
 }
 </script>
 
@@ -261,7 +284,6 @@ export default class FormSelect extends Mixins(FieldMixin) {
   right 0
   bottom 0
   width 40px
-  z-index 200003
 
 .pui-select-remove-item
   opacity 0.6
