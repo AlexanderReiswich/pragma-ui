@@ -116,7 +116,7 @@ export default class FormInput extends Mixins(FieldMixin) {
         behavior: ['bottom', 'top']
       },
       preventOverflow: {
-        boundariesElement: window
+        boundariesElement: 'window'
       },
       shift: {
         fn: data => {
