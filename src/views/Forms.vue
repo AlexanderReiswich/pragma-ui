@@ -58,6 +58,7 @@
               :multiple="false"
               :searchable="false"
               :options="salutationOptions"
+              :empty="false"
             />
           </div>
           <div class="col s12 m6 push-down-m">

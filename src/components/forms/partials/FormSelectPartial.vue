@@ -11,9 +11,11 @@
         :color="isSelected ? 'primary' : 'subtle'"
         :thin="true"
         size="l"
-        class="inline push-right-s"
+        class="pui-form-select-checkbox inline push-right-s"
       />
-      {{ option.text }}
+      <span class="pui-form-select-label">
+        {{ option.text }}
+      </span>
     </a>
   </div>
 </template>

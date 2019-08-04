@@ -52,15 +52,20 @@
         v-for="item in selectedOptions"
         :key="item.value"
       >
-        {{ item.text }}
-        <tico
-          name="close"
-          color="dark"
-          size="m"
-          class="pui-pui-select-remove-item float-right push-left-s tween pointer"
-          :thin="true"
-          @click.native.prevent="toggleOption(item)"
-        />
+        <div class="align-v">
+          <div class="inline pui-select-item-text">
+            {{ item.text }}
+          </div>
+          <tico
+            name="close"
+            color="dark"
+            size="m"
+            class="pui-select-remove-item push-left-s tween pointer"
+            :thin="true"
+            v-show="empty ? true : cValue.length > 1"
+            @click.native.prevent="toggleOption(item)"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -110,6 +115,12 @@ export default class FormSelect extends Mixins(FieldMixin) {
   })
   placeholder
 
+  @Prop({
+    type: Boolean,
+    default: true
+  })
+  empty
+
   /**
    * Expected is an array with objects that contain a value and text field.
    * The value is what we normally save to the database, while the text is what we display in the UI.
@@ -129,17 +140,13 @@ export default class FormSelect extends Mixins(FieldMixin) {
   options
 
   /**
-   * Set the first options entry as focused if the focused variable is empty and the options have been updated.
-   *
-   * @param {Array} options
+   * Update the local value whenever the cValue is changed.
    */
-  @Watch('options', {
+  @Watch('cValue', {
     immediate: true
   })
-  onOptionsChanged(options) {
-    if (!this.focusedEntry) {
-      if (options && options[0]) this.focusedEntry = options[0]
-    }
+  onValueChanged(val) {
+    this.setLocalValue(val)
   }
 
   /**
@@ -195,26 +202,38 @@ export default class FormSelect extends Mixins(FieldMixin) {
    * @return {void}
    */
   toggleOption(selection) {
-    const getValue = (val, prev, multiple) => {
+    const getValue = (val, prev, multiple, empty) => {
       if (multiple) {
         if (prev && prev.constructor === Array) {
-          return !prev.find(item => item === val) // If the value hasn't already been added...
-            ? [...prev, val] // ...merge the new and existing values
-            : prev.filter(item => item !== val) // ...or remove selected value from selection
+          // If the value hasn't already been added...
+          if (!prev.find(item => item === val)) {
+            // ...merge the new and existing values
+            return [...prev, val]
+          } else {
+            // If empty option is false and only one value is left, do nothing
+            if (!empty && prev.length === 1) {
+              return [val]
+            }
+            // Otherwise remove selected value from selection
+            return prev.filter(item => item !== val)
+          }
         }
         return [val] // Create a new array that contains only the selected value
+      }
+      if (!empty) {
+        return val // If empty option is false, change nothing
       }
       return prev === val ? '' : val // Either add the selected value or remove it
     }
 
-    const value = getValue(selection.value, this.cValue, this.multiple)
+    const value = getValue(selection.value, this.cValue, this.multiple, this.empty)
 
     this.setLocalValue(value)
     this.updateValue(value)
   }
 
   /**
-   *  Update the localValue with the text value of the selected option.
+   *  Update the localValue variable with the text value of the selected option.
    *
    * @param {Object} value
    * @return {Boolean}
@@ -272,7 +291,10 @@ export default class FormSelect extends Mixins(FieldMixin) {
   }
 
   mounted() {
-    this.setLocalValue()
+    // If the empty option is false and no value was set, make sure to set the first option
+    if (!this.cValue && !this.empty && this.options) {
+      this.toggleOption(this.options[0])
+    }
   }
 }
 </script>

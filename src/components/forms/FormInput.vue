@@ -138,9 +138,10 @@ export default class FormInput extends Mixins(FieldMixin) {
     let i = 0
 
     const poll = resolve => {
-      if ((el && el.offsetHeight) || i > 100) {
-        return resolve(el.offsetHeight)
-      }
+      if (i > 100) resolve(0)
+
+      if (el && el.offsetHeight) return resolve(el.offsetHeight)
+
       i++
       return setTimeout(() => poll(resolve), 1)
     }
