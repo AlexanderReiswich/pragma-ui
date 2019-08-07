@@ -4,7 +4,7 @@
       href="#"
       class="pui-form-select-partial block pad-s"
       :class="itemClass"
-      @click.prevent="$emit('select', option)"
+      @click.prevent="$emit('select', $event, option)"
     >
       <tico
         :name="isSelected ? 'check' : 'square'"

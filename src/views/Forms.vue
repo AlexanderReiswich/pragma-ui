@@ -70,6 +70,15 @@
               :options="feedbackOptions"
             />
           </div>
+          <div class="col s12 m6 push-down-m">
+            <form-select
+              name="country"
+              label="Where do you come from?"
+              :multiple="false"
+              :searchable="true"
+              :options="countries"
+            />
+          </div>
         </div>
 
         <h3 class="size-l bold push-down-m">Radio buttons</h3>
@@ -177,6 +186,29 @@ export default class FormsPage extends Vue {
     {
       value: 'dr',
       text: 'Dr.'
+    }
+  ]
+
+  countries = [
+    {
+      value: 'FR',
+      text: 'France'
+    },
+    {
+      value: 'DE',
+      text: 'Germany'
+    },
+    {
+      value: 'GB',
+      text: 'Great Britain'
+    },
+    {
+      value: 'JP',
+      text: 'Japan'
+    },
+    {
+      value: 'USA',
+      text: 'United States'
     }
   ]
 

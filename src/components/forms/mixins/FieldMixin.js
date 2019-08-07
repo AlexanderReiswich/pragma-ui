@@ -174,7 +174,7 @@ export default class FieldMixin extends Vue {
    * @returns {boolean}
    */
   isEmpty(val) {
-    return val === null || val === undefined || val === ''
+    return val === null || val === undefined
   }
 
   /**
@@ -185,7 +185,7 @@ export default class FieldMixin extends Vue {
    * @returns {void}
    */
   updateValue(e) {
-    const value = typeof e === 'object' && typeof e.target === 'object' ? e.target.value : e
+    const value = e !== null && typeof e === 'object' && e.target ? e.target.value : e
 
     this.$emit('updated', value, this.cValue)
 

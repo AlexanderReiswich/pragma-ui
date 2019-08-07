@@ -8,7 +8,7 @@
         :disabled="!extension"
         :visible-arrow="false"
         :options="extensionOptions"
-        :force-show="isExtensionOpen"
+        :force-show="isExtensionOpen || isFocused"
         :before-hide="onPopperHide"
         @show="onPopperShow"
         v-click-outside="closeExtension"
@@ -24,7 +24,7 @@
           :required="required"
           :disabled="disabled"
           :readonly="readonly"
-          @input="updateValue"
+          @input="cUpdateValue"
           @keydown="keyDown"
           @keydown.enter="beforeSubmit"
           @keydown.esc="escape"
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { Component, Prop, Mixins } from 'vue-property-decorator'
+import { Component, Prop, Mixins, Watch } from 'vue-property-decorator'
 import { FieldMixin } from '@c/forms/mixins'
 import { InputLabel, InputErrors, InputNotice } from '@c/forms/partials'
 import ClickOutside from 'vue-click-outside'
@@ -104,13 +104,17 @@ export default class FormInput extends Mixins(FieldMixin) {
 
   @Prop(Function) toggleExtension
 
-  extensionClass = ''
   extensionWidthMaps = {
     xs: 300,
     s: 400,
     m: 500
   }
-  extensionPosition = ''
+
+  extensionData = {
+    class: null,
+    position: null,
+    width: null
+  }
 
   extensionOptions = {
     placement: 'bottom-end',
@@ -125,13 +129,55 @@ export default class FormInput extends Mixins(FieldMixin) {
         fn: data => {
           const w = this.$refs.container ? this.$refs.container.offsetWidth : 0
 
-          data.styles.maxWidth = w + 'px'
-          this.setExtensionClass(data.placement, w)
+          if (data.styles && data.offsets) {
+            data.styles.maxWidth = w + 'px'
+            this.setExtensionData(data.offsets.popper, data.placement, w)
+          }
 
           return data
         }
       }
     }
+  }
+
+  isFocused = false
+
+  /**
+   * Ensure that the extension stays open so long as the input field is in focus.
+   */
+  @Watch('isExtensionOpen')
+  ensureExtensionIsOpen(open) {
+    if (!open && this.isFocused) {
+      this.toggleExtension(true)
+    }
+  }
+
+  /**
+   * This function optimizes the popper position when its content changes.
+   */
+  updatePopper() {
+    const isTop = this.extensionData.position.includes('top')
+    const el = this.$refs.popperInner
+    const popperH = this.extensionData.height
+
+    if (isTop) {
+      if (el && el.style) {
+        this.$nextTick(() => {
+          anime.set(el, {
+            translateY: popperH - el.offsetHeight
+          })
+        })
+      }
+    } else {
+      anime.set(el, {
+        translateY: 0
+      })
+    }
+  }
+
+  cUpdateValue(e) {
+    this.updateValue(e)
+    this.updatePopper()
   }
 
   getHeight(el) {
@@ -157,7 +203,7 @@ export default class FormInput extends Mixins(FieldMixin) {
 
       // Wait until the popper element was rendered and then retrieve its height
       const elH = await this.getHeight(el)
-      const isTop = this.extensionPosition.includes('top')
+      const isTop = this.extensionData.position.includes('top')
 
       anime.set(el, {
         height: '0',
@@ -172,7 +218,7 @@ export default class FormInput extends Mixins(FieldMixin) {
         height: elH,
         translateY: 0,
         complete: () => {
-          delete this.$refs.popperInner.style.height
+          this.$refs.popperInner.style.height = ''
         }
       })
     }
@@ -181,7 +227,7 @@ export default class FormInput extends Mixins(FieldMixin) {
   async onPopperHide(done) {
     const el = this.$refs.popperInner
     const elH = await this.getHeight(el)
-    const isTop = this.extensionPosition.includes('top')
+    const isTop = this.extensionData.position.includes('top')
 
     if (el) {
       anime({
@@ -198,8 +244,6 @@ export default class FormInput extends Mixins(FieldMixin) {
       })
     }
   }
-
-  isFocused = false
 
   /**
    * If the mask or transform prop was provided, the dynamic value will display the mutated value whenever the input
@@ -233,7 +277,7 @@ export default class FormInput extends Mixins(FieldMixin) {
    * @return string
    */
   get inputContainerClass() {
-    let c = [this.extensionClass]
+    let c = [this.extensionData.class]
 
     if (this.extension && this.isExtensionOpen) {
       c.push('extension-open')
@@ -262,12 +306,13 @@ export default class FormInput extends Mixins(FieldMixin) {
   }
 
   /**
-   * Add useful css classes to the popper dropdown extension depending on its state.
+   * Remember certain relevant properties of the popper extension whenever it is opened or updated.
    *
+   * @param {object} popper
    * @param {string} dir
    * @param {int} w
    */
-  setExtensionClass(dir, w) {
+  setExtensionData(popper, dir, w) {
     const placement = 'placement-' + dir
     const maps = this.extensionWidthMaps
     let wC = 'popper-l'
@@ -280,8 +325,9 @@ export default class FormInput extends Mixins(FieldMixin) {
       wC = 'popper-m'
     }
 
-    this.extensionPosition = placement
-    this.extensionClass = placement + ' ' + wC
+    this.extensionData.height = popper.height
+    this.extensionData.position = placement
+    this.extensionData.class = placement + ' ' + wC
   }
 
   /**
@@ -297,6 +343,7 @@ export default class FormInput extends Mixins(FieldMixin) {
   onFocus() {
     this.isFocused = true
     this.toggleExtension ? this.toggleExtension(true) : null
+    this.$emit('focus', this.cValue, this)
   }
 
   /**
@@ -305,7 +352,7 @@ export default class FormInput extends Mixins(FieldMixin) {
   onBlur() {
     this.isFocused = false
     const newVal = this.$refs.input ? this.$refs.input.value : null
-    this.$emit('blur', newVal, this.cValue)
+    this.$emit('blur', newVal, this.cValue, this)
   }
 
   /**

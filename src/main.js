@@ -21,6 +21,7 @@ Vue.use({
       searchLabelText: 'Search',
       selectPlaceholderText: 'Select...',
       searchPlaceholderText: 'Search...',
+      selectNoResults: '— No results —',
       calendarLocale: null
     }
   }
