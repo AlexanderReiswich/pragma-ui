@@ -24,6 +24,8 @@ export default class DatalistContainer extends Vue {
 
   resortComplete = false
 
+  localBodyData = []
+
   @Prop({
     default: {
       itemsPerPage: 8,
@@ -33,7 +35,9 @@ export default class DatalistContainer extends Vue {
     }
   })
   config
+
   @Prop(Object) head
+
   @Prop(Array) body
 
   @Prop(Function) customFilter
@@ -84,7 +88,9 @@ export default class DatalistContainer extends Vue {
     immediate: true,
     deep: true
   })
-  onBodyChanged() {
+  onBodyChanged(data) {
+    this.localBodyData = clone(data)
+
     if (!this.resortComplete) {
       this.attemptResort()
     } else {
@@ -128,7 +134,7 @@ export default class DatalistContainer extends Vue {
   }
 
   /**
-   * Changes the order of the entries.
+   * Changes the order of the entries based on localized comparison.
    *
    * @param {string} column
    * @param {string} dir
@@ -136,12 +142,14 @@ export default class DatalistContainer extends Vue {
    */
   resort(column, dir) {
     function compare(a, b) {
-      if (a[column] < b[column]) return dir === 'asc' ? -1 : 1
-      if (a[column] > b[column]) return dir === 'asc' ? 1 : -1
-      return 0
+      if (typeof a[column] === 'string' && typeof b[column] === 'string') {
+        return dir === 'asc'
+          ? a[column].localeCompare(b[column])
+          : b[column].localeCompare(a[column])
+      }
     }
 
-    this.body.sort(compare)
+    this.localBodyData.sort(compare)
   }
 
   /**
@@ -160,9 +168,9 @@ export default class DatalistContainer extends Vue {
     let activeEntries = []
 
     // We loop through all entries and cache the index of the ones that pass our filters.
-    for (let i = 0, len = this.body.length; i < len; i++) {
+    for (let i = 0, len = this.localBodyData.length; i < len; i++) {
       // Check if this entry meets the filter requirements
-      if (this.filterDataset(this.body[i])) {
+      if (this.filterDataset(this.localBodyData[i])) {
         filteredEntries.push(i)
       }
     }
@@ -193,7 +201,7 @@ export default class DatalistContainer extends Vue {
     }
 
     this.entriesData = {
-      all: this.body,
+      all: this.localBodyData,
       filteredEntries,
       activeEntries
     }

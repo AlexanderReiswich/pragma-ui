@@ -27,6 +27,7 @@ import createSampleUsers from '@c/helpers/createSampleUsers'
 import FormCheckbox from '@c/forms/FormCheckbox'
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+import DataListEdit from './partials/DataListEdit'
 
 dayjs.extend(LocalizedFormat)
 
@@ -85,6 +86,10 @@ export default class DataListsPage extends Vue {
         mask: date => {
           return dayjs(date).format('L')
         }
+      },
+      actions: {
+        text: 'Actions',
+        component: DataListEdit
       }
     },
     body: []
@@ -121,7 +126,7 @@ export default class DataListsPage extends Vue {
 
   mounted() {
     setTimeout(() => {
-      this.table.body = createSampleUsers(988)
+      this.table.body = createSampleUsers(98)
       this.loading = false
     }, 1000)
   }

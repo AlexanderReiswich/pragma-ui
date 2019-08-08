@@ -6,6 +6,7 @@
       @click="toggleEditableEntry"
     >
       {{ content }}
+      <component :is="row.component" :row="row" v-if="row.component" />
     </div>
     <div class="pui-edit-entry tween" spinner-class="border-primary" @click="toggleEditableEntry">
       <tico :name="editingEntry === currentEntry ? 'check' : 'edit'" color="primary" size="xl" />

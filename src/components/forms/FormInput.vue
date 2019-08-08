@@ -24,6 +24,7 @@
           :required="required"
           :disabled="disabled"
           :readonly="readonly"
+          :autocomplete="disableAutocomplete ? 'disabled' : 'autocomplete'"
           @input="cUpdateValue"
           @keydown="keyDown"
           @keydown.enter="beforeSubmit"
@@ -103,6 +104,8 @@ export default class FormInput extends Mixins(FieldMixin) {
   @Prop(Function) beforeKeyPress
 
   @Prop(Function) toggleExtension
+
+  @Prop(Boolean) disableAutocomplete
 
   extensionWidthMaps = {
     xs: 300,

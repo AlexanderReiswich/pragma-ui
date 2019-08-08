@@ -13,6 +13,7 @@
       :label="false"
       :readonly="!searchable"
       :inputClass="!searchable ? 'cursor-default' : ''"
+      :disable-autocomplete="true"
       @focus="onInputFocus"
       @keydown.native.prevent.up="traverse('up')"
       @keydown.native.prevent.down="traverse('down')"

@@ -7,7 +7,7 @@
     />
     <button
       :class="lConfig.showAllItemsButtonClass"
-      v-text="lConfig.showAllText"
+      v-text="lConfig.showAllResults"
       v-if="lConfig.showAllItemsButton && !showingAllItems"
       @click.prevent="showAll"
     />
@@ -42,9 +42,7 @@ export default class PaginationPartial extends Vue {
     paginationBtnClass:
       'pui-pagination-btn pad-v-s pad-h-l size-l subtle secondary light-bg rounded-s primary-on-hover tween',
     paginationBtnActiveClass:
-      'pui-pagination-btn-active pad-v-s pad-h-l size-l primary-bg white rounded-s',
-    showAllText: 'Show all entries',
-    allEntriesLoadedText: '— All entries loaded —'
+      'pui-pagination-btn-active pad-v-s pad-h-l size-l primary-bg white rounded-s'
   }
   lConfig = {}
 

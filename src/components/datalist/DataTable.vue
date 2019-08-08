@@ -2,10 +2,10 @@
   <datalist-container
     :head="head"
     :body="body"
-    :config="lConfig"
+    :config="config"
     :customFilter="customFilter"
-    @headUpdated="saveHeadData"
-    @configUpdated="updateConfig"
+    @headUpdated="saveHeadData ? saveHeadData($event) : () => {}"
+    @configUpdated="updateConfig ? updateConfig($event) : () => {}"
   >
     <template slot-scope="{ columns, entriesData, setSearch, filterEntry, sortBy }">
       <div v-if="loading" class="center push-h-auto push-v-xl">
@@ -13,17 +13,17 @@
       </div>
 
       <template v-if="!loading">
-        <template v-if="lConfig.showSearch">
+        <template v-if="config.showSearch">
           <label
             class="pui-label block muted small bold push-down-xs"
             for="data-list"
-            v-text="lConfig.searchLabelText"
+            v-text="config.searchLabelText"
           />
           <input
             id="data-list"
             class="narrow push-down"
             type="text"
-            :placeholder="lConfig.searchPlaceholderText"
+            :placeholder="config.searchPlaceholderText"
             @input="setSearch"
             @keydown.enter="setSearch"
           />
@@ -48,28 +48,32 @@
             <tbody>
               <template v-for="(row, rowKey) in entriesData.all">
                 <tr v-if="filterEntry(rowKey)" :key="rowKey">
-                  <td
-                    v-for="(column, colName) in row"
-                    :key="colName"
-                    class="pui-datatable-column relative"
-                  >
-                    <template v-if="head[colName] && head[colName].editable">
-                      <datalist-editable-partial
-                        :activeEntries="entriesData.activeEntries"
-                        :head="head"
-                        :rowKey="rowKey"
-                        :row="row"
-                        :colName="colName"
-                        :content="head[colName].mask ? head[colName].mask(column) : column"
-                        :editingEntry="editingEntry"
-                        :updateEditingEntry="updateEditingEntry"
-                        :updateEntry="updateEntry"
-                      />
-                    </template>
-                    <template v-else>
-                      {{ head[colName].mask ? head[colName].mask(column) : column }}
-                    </template>
-                  </td>
+                  <template v-for="(column, name) in columns">
+                    <td class="pui-datatable-column relative" :key="name">
+                      <template v-if="head[name] && head[name].editable">
+                        <datalist-editable-partial
+                          :activeEntries="entriesData.activeEntries"
+                          :head="head"
+                          :rowKey="rowKey"
+                          :row="row"
+                          :colName="name"
+                          :content="getContent(name, row)"
+                          :editingEntry="editingEntry"
+                          :updateEditingEntry="updateEditingEntry"
+                          :updateEntry="updateEntry"
+                        />
+                      </template>
+                      <template v-else>
+                        {{ getContent(name, row) }}
+                        <component
+                          v-if="head[name]"
+                          :is="head[name].component"
+                          :row="row"
+                          :head="head"
+                        />
+                      </template>
+                    </td>
+                  </template>
                 </tr>
               </template>
             </tbody>
@@ -77,7 +81,7 @@
         </div>
 
         <pagination-partial
-          :config="lConfig"
+          :config="config"
           :entries-data="entriesData"
           @configUpdated="updateConfig"
         />
@@ -87,7 +91,7 @@
 </template>
 
 <script>
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import { DatalistContainer, PaginationPartial, SortArrowPartial, DatalistEditablePartial } from './'
 
 @Component({
@@ -109,28 +113,13 @@ export default class DataTable extends Vue {
   @Prop(Boolean) loading
 
   editingEntry = null
-  defaultConfig = {
-    searchLabelText: 'Search',
-    searchPlaceholderText: 'Search...'
-  }
-  lConfig = {}
-
-  /**
-   * Update the local instance of the configuration whenever the config prop is changed.
-   *
-   * @returns void
-   */
-  @Watch('config', {
-    immediate: true,
-    deep: true
-  })
-  onConfigChanged(config) {
-    // Merge the default config with the global configuration and the config prop
-    this.lConfig = { ...this.defaultConfig, ...this.$puiConfig, ...config }
-  }
 
   updateEditingEntry(val) {
     this.editingEntry = val
+  }
+
+  getContent(name, row) {
+    return this.head[name].mask ? this.head[name].mask(row[name]) : row[name]
   }
 }
 </script>

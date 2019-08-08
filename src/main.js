@@ -22,7 +22,9 @@ Vue.use({
       selectPlaceholderText: 'Select...',
       searchPlaceholderText: 'Search...',
       selectNoResults: '— No results —',
-      calendarLocale: null
+      calendarLocale: null,
+      showAllResults: 'Show all entries',
+      allEntriesLoadedText: '— All entries loaded —'
     }
   }
 })
