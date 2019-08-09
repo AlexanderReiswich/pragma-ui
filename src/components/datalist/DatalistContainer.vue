@@ -141,11 +141,19 @@ export default class DatalistContainer extends Vue {
    * @returns boolean
    */
   resort(column, dir) {
+    const type = this.head[column].type
+
     function compare(a, b) {
-      if (typeof a[column] === 'string' && typeof b[column] === 'string') {
+      if (type === 'string' && typeof a[column] === 'string' && typeof b[column] === 'string') {
         return dir === 'asc'
           ? a[column].localeCompare(b[column])
           : b[column].localeCompare(a[column])
+      }
+
+      if (type === 'number' || type === 'date') {
+        if (a[column] < b[column]) return dir === 'asc' ? -1 : 1
+        if (a[column] > b[column]) return dir === 'asc' ? 1 : -1
+        return 0
       }
     }
 

@@ -221,7 +221,9 @@ export default class FormInput extends Mixins(FieldMixin) {
         height: elH,
         translateY: 0,
         complete: () => {
-          this.$refs.popperInner.style.height = ''
+          if (this.$refs.popperInner) {
+            this.$refs.popperInner.style.height = ''
+          }
         }
       })
     }

@@ -33,7 +33,7 @@
           <table>
             <thead>
               <tr>
-                <th v-for="(column, key) in columns" :key="key">
+                <th v-for="(column, key) in columns" :key="key" :class="column.thClass">
                   <sort-arrow-partial
                     :class="{ 'align-right': column.name === 'joinDate' }"
                     :direction="column.sortDir"
@@ -49,7 +49,7 @@
               <template v-for="(row, rowKey) in entriesData.all">
                 <tr v-if="filterEntry(rowKey)" :key="rowKey">
                   <template v-for="(column, name) in columns">
-                    <td class="pui-datatable-column relative" :key="name">
+                    <td class="pui-datatable-column relative" :key="name" :class="column.tdClass">
                       <template v-if="head[name] && head[name].editable">
                         <datalist-editable-partial
                           :activeEntries="entriesData.activeEntries"

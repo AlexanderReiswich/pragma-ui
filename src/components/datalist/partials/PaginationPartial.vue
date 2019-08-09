@@ -5,21 +5,24 @@
       v-text="lConfig.allEntriesLoadedText"
       v-if="showingAllItems && showAllLoadedText"
     />
-    <button
-      :class="lConfig.showAllItemsButtonClass"
-      v-text="lConfig.showAllResults"
-      v-if="lConfig.showAllItemsButton && !showingAllItems"
-      @click.prevent="showAll"
-    />
-    <ul v-if="pageCount && !showingAllItems" class="pui-pagination push-up push-right">
-      <li v-for="p in structure" :key="p.index" :class="{ active: p.isActive }">
-        <button
-          v-text="p.isNumber ? p.index : '...'"
-          :class="p.isActive ? lConfig.paginationBtnActiveClass : lConfig.paginationBtnClass"
-          @click.prevent="p.isNumber ? goToPage(p.index) : expandPagination"
-        />
-      </li>
-    </ul>
+
+    <div v-show="showPagination">
+      <button
+        :class="lConfig.showAllItemsButtonClass"
+        v-text="lConfig.showAllResults"
+        v-if="lConfig.showAllItemsButton && !showingAllItems"
+        @click.prevent="showAll"
+      />
+      <ul v-if="pageCount && !showingAllItems" class="pui-pagination push-up push-right">
+        <li v-for="p in structure" :key="p.index" :class="{ active: p.isActive }">
+          <button
+            v-text="p.isNumber ? p.index : '...'"
+            :class="p.isActive ? lConfig.paginationBtnActiveClass : lConfig.paginationBtnClass"
+            @click.prevent="p.isNumber ? goToPage(p.index) : expandPagination"
+          />
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -73,6 +76,10 @@ export default class PaginationPartial extends Vue {
 
   get hasNext() {
     return this.lConfig.currentPage < this.pageCount
+  }
+
+  get showPagination() {
+    return this.entriesData.filteredEntries.length > this.lConfig.itemsPerPage
   }
 
   get showingAllItems() {

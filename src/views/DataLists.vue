@@ -51,6 +51,16 @@ export default class DataListsPage extends Vue {
 
   table = {
     head: {
+      id: {
+        text: 'ID',
+        searchable: false,
+        sortDir: 'asc',
+        active: false,
+        include: null,
+        exclude: null,
+        type: 'number',
+        editable: false
+      },
       username: {
         text: 'Username',
         searchable: true,
@@ -89,7 +99,9 @@ export default class DataListsPage extends Vue {
       },
       actions: {
         text: 'Actions',
-        component: DataListEdit
+        component: DataListEdit,
+        thClass: 'align-right',
+        tdClass: 'align-right'
       }
     },
     body: []
@@ -126,7 +138,7 @@ export default class DataListsPage extends Vue {
 
   mounted() {
     setTimeout(() => {
-      this.table.body = createSampleUsers(98)
+      this.table.body = createSampleUsers(29)
       this.loading = false
     }, 1000)
   }
