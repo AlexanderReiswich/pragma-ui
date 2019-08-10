@@ -95,11 +95,20 @@ export default {
       referenceElm: null,
       popperJS: null,
       showPopper: false,
+      hasOpened: false,
       currentPlacement: '',
       popperOptions: {
         placement: 'bottom',
         computeStyle: {
           gpuAcceleration: false
+        },
+        onUpdate: () => {
+          // Updates in the Popper context are scheduled, so we don't know exactly when an update takes place.
+          // For this reason, we use the hasOpened prop to determine when the popper was, in fact, opened.
+          if (!this.hasOpened) {
+            this.hasOpened = true
+            this.$emit('opened', this)
+          }
         }
       }
     }
@@ -177,15 +186,14 @@ export default {
     },
     doClose() {
       if (this.showPopper) {
-        if (this.beforeHide) {
-          this.beforeHide(() => {
-            this.showPopper = false
-            this.$emit('hide', this)
-          })
-        } else {
+        const hide = () => {
           this.showPopper = false
+          this.hasOpened = false
           this.$emit('hide', this)
         }
+
+        // Trigger the beforeHide callback if it was provided
+        this.beforeHide ? this.beforeHide(() => hide()) : hide()
       }
     },
     doDestroy() {

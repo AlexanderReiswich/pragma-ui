@@ -10,7 +10,7 @@
         :options="extensionOptions"
         :force-show="isExtensionOpen || isFocused"
         :before-hide="onPopperHide"
-        @show="onPopperShow"
+        @opened="onPopperShow"
         v-click-outside="closeExtension"
       >
         <input
@@ -156,7 +156,7 @@ export default class FormInput extends Mixins(FieldMixin) {
   }
 
   /**
-   * This function optimizes the popper position when its content changes.
+   * This function optimizes the popper position when the size of its content changes.
    */
   updatePopper() {
     const isTop = this.extensionData.position.includes('top')
@@ -183,36 +183,26 @@ export default class FormInput extends Mixins(FieldMixin) {
     this.updatePopper()
   }
 
-  getHeight(el) {
-    let i = 0
-
-    const poll = resolve => {
-      if (i > 100) resolve(0)
-
-      if (el && el.offsetHeight) return resolve(el.offsetHeight)
-
-      i++
-      return setTimeout(() => poll(resolve), 1)
-    }
-    return new Promise(poll)
-  }
-
-  async onPopperShow() {
+  onPopperShow() {
     const el = this.$refs.popperInner
 
     if (el) {
-      // Hide the element to prevent it from flashing
+      // First, hide the element to prevent it from flashing
       anime.set(el, { opacity: '0' })
 
-      // Wait until the popper element was rendered and then retrieve its height
-      const elH = await this.getHeight(el)
-      const isTop = this.extensionData.position.includes('top')
+      // Then, save the elements real height
+      const elH = el.offsetHeight
+      const isTop = this.extensionData.position
+        ? this.extensionData.position.includes('top')
+        : false
 
+      // Set the starting height and y-offset
       anime.set(el, {
         height: '0',
         translateY: isTop ? elH : 0
       })
 
+      // Execute the animation
       anime({
         targets: el,
         easing: 'easeOutQuint',
@@ -221,6 +211,7 @@ export default class FormInput extends Mixins(FieldMixin) {
         height: elH,
         translateY: 0,
         complete: () => {
+          // Unset the fixed height after the animation has ended
           if (this.$refs.popperInner) {
             this.$refs.popperInner.style.height = ''
           }
@@ -229,12 +220,15 @@ export default class FormInput extends Mixins(FieldMixin) {
     }
   }
 
-  async onPopperHide(done) {
+  onPopperHide(done) {
     const el = this.$refs.popperInner
-    const elH = await this.getHeight(el)
-    const isTop = this.extensionData.position.includes('top')
 
     if (el) {
+      const elH = el.offsetHeight
+      const isTop = this.extensionData.position
+        ? this.extensionData.position.includes('top')
+        : false
+
       anime({
         targets: el,
         easing: 'easeInSine',
@@ -243,7 +237,7 @@ export default class FormInput extends Mixins(FieldMixin) {
         opacity: '0',
         translateY: isTop ? elH : 0,
         complete: () => {
-          el.style.height = 'auto'
+          el.style.height = ''
           done()
         }
       })
@@ -251,8 +245,9 @@ export default class FormInput extends Mixins(FieldMixin) {
   }
 
   /**
-   * If the mask or transform prop was provided, the dynamic value will display the mutated value whenever the input
-   * field is in focus (masked) or generally (transform). Otherwise, the regular cValue will be shown.
+   * If the mask or transform prop was provided, the dynamic value will display the mutated version of the value
+   * (without actually changing the internal value). The difference between mask and transform is that transform
+   * will always show the altered value, whereas mask will show the original value when the input is in focus.
    * @return Object
    */
   get dynValue() {
@@ -282,7 +277,9 @@ export default class FormInput extends Mixins(FieldMixin) {
    * @return string
    */
   get inputContainerClass() {
-    let c = [this.extensionData.class]
+    let c = []
+
+    c.push(this.extensionData.class)
 
     if (this.extension && this.isExtensionOpen) {
       c.push('extension-open')
