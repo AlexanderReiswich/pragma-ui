@@ -233,8 +233,11 @@ export default class DatalistEditablePartial extends Vue {
 <style lang="stylus" scoped>
 .pui-edit-entry
   position absolute
-  top 7px
+  top 0
+  bottom 0
   right 15px
+  display flex
+  align-items center
   cursor pointer
   opacity 0
 
