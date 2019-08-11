@@ -125,8 +125,8 @@ export default class DataListsPage extends Vue {
     this.config = config
   }
 
-  async updateEntry({ key, col, value }) {
-    this.table.body[key][col] = value
+  updateEntry(update, { row, value }) {
+    update(this.table.body, { id: row.id }, value)
   }
 
   customFilter(item) {

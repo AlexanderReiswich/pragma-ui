@@ -22,7 +22,7 @@ export default class DatalistContainer extends Vue {
     activeEntries: []
   }
 
-  resortComplete = false
+  isResorting = false
 
   localBodyData = []
 
@@ -73,14 +73,13 @@ export default class DatalistContainer extends Vue {
   onHeadChanged(head, old) {
     this.attemptResort(head, old)
     this.updateListConstraints()
+    this.isResorting = false
   }
 
   /**
-   * Whenever the body data changes we call updateListConstraints, as well as trigger a reorder.
+   * Whenever the body data changes we call updateListConstraints and trigger a reorder.
    * Since this method changes the body data, it would normally call itself recursively, leading to an infinite loop.
-   * In order to avoid this, we check whether the old and new body data are identical first. If yes, we also check
-   * whether the first and last items within the old and new body data are the same. If yes, we assume that the data
-   * has not been changed and as such no update is necessary.
+   * In order to avoid this, we first check if a resort is currently taking place.
    *
    * @returns void
    */
@@ -89,15 +88,12 @@ export default class DatalistContainer extends Vue {
     deep: true
   })
   onBodyChanged(data) {
-    this.localBodyData = clone(data)
-
-    if (!this.resortComplete) {
+    if (!this.isResorting) {
+      this.localBodyData = clone(data)
       this.attemptResort()
-    } else {
-      this.resortComplete = false
+      this.updateListConstraints()
+      this.isResorting = false
     }
-
-    this.updateListConstraints()
   }
 
   /**
@@ -106,6 +102,8 @@ export default class DatalistContainer extends Vue {
    * @returns void
    */
   attemptResort(head, old) {
+    this.isResorting = true
+
     if (!head) head = this.head
 
     for (const [name, column] of Object.entries(head)) {
@@ -129,8 +127,6 @@ export default class DatalistContainer extends Vue {
         }
       }
     }
-
-    this.resortComplete = true
   }
 
   /**

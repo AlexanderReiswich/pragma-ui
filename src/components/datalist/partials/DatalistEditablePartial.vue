@@ -18,9 +18,7 @@
         :class="{ active: editingEntry === currentEntry }"
         ref="editingForm"
         v-if="editingEntry === currentEntry"
-        @submit="
-          ($event, form) => submitEditableEntry($event, form, { row, col: colName, key: rowKey })
-        "
+        @submit="($event, form) => submitEditableEntry($event, form, { row, colData, colName })"
       >
         <form-input
           v-show="editingEntry === currentEntry"
@@ -59,6 +57,7 @@ export default class DatalistEditablePartial extends Vue {
   @Prop(Object) head
   @Prop(Number) rowKey
   @Prop(Object) row
+  @Prop(Object) colData
   @Prop(String) colName
   @Prop() content
   @Prop(String) editingEntry
@@ -67,6 +66,7 @@ export default class DatalistEditablePartial extends Vue {
 
   nextEditingEntry = null
   editClickable = true
+  columnToUpdate = ''
 
   get currentEntry() {
     return this.rowKey + '_' + this.colName
@@ -98,16 +98,40 @@ export default class DatalistEditablePartial extends Vue {
   }
 
   /**
+   * This method allows the user to update the external list data easily by searching for the right entry via
+   * an object of row properties.
+   *
+   * @returns void
+   */
+  updateEntryHelper(entries, search, value) {
+    for (let i = 0, l = entries.length; i < l; i++) {
+      let match = true
+
+      for (const [key, val] of Object.entries(search)) {
+        if (entries[i][key] !== val) {
+          match = false
+        }
+      }
+
+      if (match) {
+        entries[i][this.columnToUpdate] = value
+        return
+      }
+    }
+  }
+
+  /**
    * Saves the currently edited entry and closes it.
    *
    * @returns void
    */
-  async submitEditableEntry({ value }, { setLoading }, { row, col, key }) {
-    // If this field was already active, attempt to save it
+  async submitEditableEntry({ value }, { setLoading }, { row, colData, colName }) {
     setLoading(true)
 
+    // If this field was already active, attempt to save it
     if (this.updateEntry) {
-      await this.updateEntry({ key, col, row, value })
+      this.columnToUpdate = colName
+      await this.updateEntry(this.updateEntryHelper, { row, column: colData, value })
     }
 
     setLoading(false)

@@ -48,26 +48,27 @@
             <tbody>
               <template v-for="(row, rowKey) in entriesData.all">
                 <tr v-if="filterEntry(rowKey)" :key="rowKey">
-                  <template v-for="(column, name) in columns">
-                    <td class="pui-datatable-column relative" :key="name" :class="column.tdClass">
-                      <template v-if="head[name] && head[name].editable">
+                  <template v-for="(colData, colName) in columns">
+                    <td class="pui-datatable-column" :key="colName" :class="colData.tdClass">
+                      <template v-if="head[colName] && head[colName].editable">
                         <datalist-editable-partial
                           :activeEntries="entriesData.activeEntries"
                           :head="head"
                           :rowKey="rowKey"
                           :row="row"
-                          :colName="name"
-                          :content="getContent(name, row)"
+                          :colData="colData"
+                          :colName="colName"
+                          :content="getContent(colName, row)"
                           :editingEntry="editingEntry"
                           :updateEditingEntry="updateEditingEntry"
                           :updateEntry="updateEntry"
                         />
                       </template>
                       <template v-else>
-                        {{ getContent(name, row) }}
+                        {{ getContent(colName, row) }}
                         <component
-                          v-if="head[name]"
-                          :is="head[name].component"
+                          v-if="head[colName]"
+                          :is="head[colName].component"
                           :row="row"
                           :head="head"
                         />
@@ -130,4 +131,7 @@ export default class DataTable extends Vue {
 
 .pui-datatable-container table
   min-width 800px
+
+.pui-datatable-column
+  position relative
 </style>
