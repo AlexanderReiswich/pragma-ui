@@ -131,7 +131,7 @@ export default class DatalistEditablePartial extends Vue {
     // If this field was already active, attempt to save it
     if (this.updateEntry) {
       this.columnToUpdate = colName
-      await this.updateEntry(this.updateEntryHelper, { row, column: colData, value })
+      await this.updateEntry(this.updateEntryHelper, { row, colData, colName, value })
     }
 
     setLoading(false)
