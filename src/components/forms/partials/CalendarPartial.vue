@@ -112,7 +112,7 @@
     </div>
 
     <div class="pui-selection-overlay" v-show="selectingMonth">
-      <div class="pui-months-overview" v-show="selectingMonth">
+      <div class="pui-months-overview flex wrap align-vh" v-show="selectingMonth">
         <div class="pui-months-overview-title full bold" v-text="config.monthSelectionText" />
         <a
           v-for="(month, index) in monthNames"
@@ -346,11 +346,7 @@ export default class CalendarPartial extends Mixins(CalendarMixin) {
   text-align center
 
 .pui-months-overview
-  display flex
-  flex-wrap wrap
-  align-items center
   align-content space-evenly
-  justify-content center
   height 100%
 
 .pui-months-overview > a

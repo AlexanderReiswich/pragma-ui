@@ -8,7 +8,11 @@
       {{ content }}
       <component :is="row.component" :row="row" v-if="row.component" />
     </div>
-    <div class="pui-edit-entry tween" spinner-class="border-primary" @click="toggleEditableEntry">
+    <div
+      class="pui-edit-entry flex align-v tween"
+      spinner-class="border-primary"
+      @click="toggleEditableEntry"
+    >
       <tico :name="editingEntry === currentEntry ? 'check' : 'edit'" color="primary" size="xl" />
     </div>
     <transition v-on:after-enter="afterEnter">
@@ -260,8 +264,6 @@ export default class DatalistEditablePartial extends Vue {
   top 0
   bottom 0
   right 15px
-  display flex
-  align-items center
   cursor pointer
   opacity 0
 

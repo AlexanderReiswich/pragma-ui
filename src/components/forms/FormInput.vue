@@ -159,7 +159,7 @@ export default class FormInput extends Mixins(FieldMixin) {
    * This function optimizes the popper position when the size of its content changes.
    */
   updatePopper() {
-    const isTop = this.extensionData.position.includes('top')
+    const isTop = this.extensionData.position ? this.extensionData.position.includes('top') : false
     const el = this.$refs.popperInner
     const popperH = this.extensionData.height
 
