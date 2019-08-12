@@ -24,7 +24,7 @@ Vue.use({
       selectNoResults: '— No results —',
       calendarLocale: null,
       showAllResults: 'Show all entries',
-      allEntriesLoadedText: '— All entries loaded —'
+      allEntriesLoadedText: num => '— All ' + num + ' entries loaded —'
     }
   }
 })

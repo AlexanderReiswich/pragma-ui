@@ -2,7 +2,7 @@
   <div>
     <div
       class="pui-all-loaded center small muted push-up-l"
-      v-text="lConfig.allEntriesLoadedText"
+      v-text="allEntriesLoadedText"
       v-if="showingAllItems && showAllLoadedText"
     />
 
@@ -166,6 +166,12 @@ export default class PaginationPartial extends Vue {
     }
 
     return res
+  }
+
+  get allEntriesLoadedText() {
+    return typeof this.lConfig.allEntriesLoadedText === 'function'
+      ? this.lConfig.allEntriesLoadedText(this.entriesData.all.length)
+      : this.lConfig.allEntriesLoadedText
   }
 
   expandPagination() {
