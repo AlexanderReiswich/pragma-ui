@@ -95,7 +95,7 @@ export default class FormNumber extends Mixins(FieldMixin) {
 
   localValue = 0
   delayTimeout = null
-  isWalking = false
+  isWalking = ''
 
   /**
    * Get the props for the input component, but exclude the ones that relate to the number component.
@@ -317,7 +317,7 @@ export default class FormNumber extends Mixins(FieldMixin) {
     if (this.isWalking === 'up') this.increment()
     if (this.isWalking === 'down') this.decrement()
 
-    this.isWalking = false
+    this.isWalking = ''
 
     // Trigger the value update
     this.updateValue(this.localValue)
@@ -332,14 +332,14 @@ export default class FormNumber extends Mixins(FieldMixin) {
 <style lang="stylus">
 .pui-number-button-container
   position absolute
-  top 0
-  right 0
-  bottom 0
-  padding 8px
+  display flex
+  top 8px
+  right 8px
+  bottom 8px
 
 .pui-number-minus,
 .pui-number-plus
-  display inline-flex
+  display flex
   align-items center
   font-weight bold
   font-size 25px
@@ -354,6 +354,10 @@ export default class FormNumber extends Mixins(FieldMixin) {
 .pui-number-minus:hover,
 .pui-number-plus:hover
   opacity 1
+
+.pui-number-minus:active,
+.pui-number-plus:active
+  background-color rgba(33,29,0,0.1)
 
 .pui-number-disabled,
 .pui-number-disabled:hover

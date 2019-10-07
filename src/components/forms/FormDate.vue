@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { Component, Prop, Mixins } from 'vue-property-decorator'
+import { Component, Prop, Watch, Mixins } from 'vue-property-decorator'
 import { FieldMixin } from '@c/forms/mixins'
 import { CalendarPartial } from '@c/forms/partials'
 import FormInput from './FormInput'
@@ -140,10 +140,24 @@ export default class FormDate extends Mixins(FieldMixin) {
     let currentDate = this.transformDate()
 
     if (date && date !== currentDate) {
-      this.localValue = dayjs(date, this.visibleFormat).isValid()
-        ? dayjs(date, this.visibleFormat)
-        : dayjs(currentDate, this.visibleFormat)
+      this.localValue = this.formatDateValue(date, currentDate)
     }
+  }
+
+  formatDateValue(newDate, oldDate) {
+    return dayjs(newDate, this.visibleFormat).isValid()
+      ? dayjs(newDate, this.visibleFormat)
+      : dayjs(oldDate, this.visibleFormat)
+  }
+
+  /**
+   * Update the local value whenever the cValue is changed.
+   */
+  @Watch('cValue', {
+    immediate: true
+  })
+  onValueChanged(val) {
+    this.localValue = this.formatDateValue(val, this.transformDate())
   }
 }
 </script>

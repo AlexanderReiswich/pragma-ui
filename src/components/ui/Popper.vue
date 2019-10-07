@@ -240,14 +240,17 @@ export default {
       })
     },
     destroyPopper() {
-      off(this.referenceElm, 'click', this.doToggle)
-      off(this.referenceElm, 'mouseup', this.doClose)
-      off(this.referenceElm, 'mousedown', this.doShow)
-      off(this.referenceElm, 'focus', this.doShow)
-      off(this.referenceElm, 'blur', this.doClose)
-      off(this.referenceElm, 'mouseout', this.onMouseOut)
-      off(this.referenceElm, 'mouseover', this.onMouseOver)
+      const el = this.referenceElm
+
+      off(el, 'click', this.doToggle)
+      off(el, 'mouseup', this.doClose)
+      off(el, 'mousedown', this.doShow)
+      off(el, 'focus', this.doShow)
+      off(el, 'blur', this.doClose)
+      off(el, 'mouseout', this.onMouseOut)
+      off(el, 'mouseover', this.onMouseOver)
       off(document, 'click', this.handleDocumentClick)
+
       this.doClose()
       this.doDestroy()
     },

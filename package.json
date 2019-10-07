@@ -1,6 +1,6 @@
 {
   "name": "pragma-ui",
-  "version": "0.3.2",
+  "version": "0.3.4",
   "description": "A PragmaCSS-based set of UI elements",
   "license": "MIT",
   "keywords": [
@@ -12,12 +12,12 @@
   "main": "./dist/pragma-ui.umd.js",
   "files": [
     "dist",
-    "src"
+    "src/components"
   ],
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "bundle": "vue-cli-service build --target lib ./src/components/index.js",
+    "bundle": "vue-cli-service build --target lib ./src/components/index.js --mode production",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -39,19 +39,20 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.4.4",
-    "@vue/cli-plugin-babel": "^3.9.2",
-    "@vue/cli-plugin-eslint": "^3.9.2",
-    "@vue/cli-service": "^3.9.2",
-    "@vue/eslint-config-prettier": "^4.0.1",
+    "@vue/cli-plugin-babel": "^3.11.0",
+    "@vue/cli-plugin-eslint": "^3.11.0",
+    "@vue/cli-service": "^3.11.0",
+    "@vue/eslint-config-prettier": "^5.0.0",
     "autoprefixer": "^9.6.1",
-    "babel-eslint": "^10.0.2",
-    "eslint": "^6.0.1",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.2.2",
+    "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-vue": "^5.2.3",
     "faker": "^4.1.0",
-    "stylus": "^0.54.5",
+    "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",
-    "vue-property-decorator": "^8.2.1",
-    "vue-router": "^3.0.7",
+    "vue-property-decorator": "^8.2.2",
+    "vue-router": "^3.1.2",
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {
@@ -82,7 +83,7 @@
     },
     "parserOptions": {
       "parser": "babel-eslint",
-      "ecmaVersion": 2017,
+      "ecmaVersion": 8,
       "sourceType": "module",
       "ecmaFeatures": {
         "legacyDecorators": true
