@@ -284,6 +284,7 @@ export default class CalendarPartial extends Mixins(CalendarMixin) {
   submitCalendar() {
     this.setDate(this.vD)
     this.toggleExtension ? this.toggleExtension(false) : null
+    this.$emit('saved', this.vD)
   }
 
   mounted() {

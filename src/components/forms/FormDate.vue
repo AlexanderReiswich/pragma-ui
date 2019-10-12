@@ -2,26 +2,27 @@
   <form-input
     v-bind="filteredProps"
     slot="reference"
-    :value="localValue ? localValue.format(storageFormat) : null"
+    :value="cValue"
     :extension="true"
     :transform="transformDate"
     :isExtensionOpen="isOpen"
     :toggleExtension="toggleExtension"
-    @blur="onBlur"
+    :disableAutocomplete="true"
   >
     <template v-slot:extension>
       <calendar-partial
-        :value="localValue"
+        :value="rawDate"
         :isOpen="isOpen"
         :number="numberComponent"
         :config="config"
         :toggleExtension="toggleExtension"
         @updated="updateDate"
+        @saved="saveDate"
       />
     </template>
     <template v-slot:afterInput>
       <transition name="fade">
-        <div class="pui-clear-date align-vh" v-if="localValue">
+        <div class="pui-clear-date align-vh" v-if="cValue">
           <tico
             name="close"
             color="muted"
@@ -37,7 +38,7 @@
 </template>
 
 <script>
-import { Component, Prop, Watch, Mixins } from 'vue-property-decorator'
+import { Component, Prop, Mixins } from 'vue-property-decorator'
 import { FieldMixin } from '@c/forms/mixins'
 import { CalendarPartial } from '@c/forms/partials'
 import FormInput from './FormInput'
@@ -45,8 +46,10 @@ import { FormNumber } from '@c/forms'
 import { Tico } from '@c/ui'
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 
 dayjs.extend(LocalizedFormat)
+dayjs.extend(customParseFormat)
 
 /**
  * The FormDate component wraps a regular FormInput component and extends it with a datetime selector.
@@ -60,7 +63,8 @@ dayjs.extend(LocalizedFormat)
 })
 export default class FormDate extends Mixins(FieldMixin) {
   isOpen = false
-  localValue = null
+  shouldSaveValue = false
+  previousValue = null
 
   // We pass the number component as a prop to the calendar to prevent circular dependency issues
   numberComponent = FormNumber
@@ -91,6 +95,13 @@ export default class FormDate extends Mixins(FieldMixin) {
     return filteredProps
   }
 
+  get rawDate() {
+    if (this.cValue) {
+      return dayjs(String(this.cValue), this.storageFormat)
+    }
+    return null
+  }
+
   /**
    * Open or close the dropdown extension.
    *
@@ -99,16 +110,38 @@ export default class FormDate extends Mixins(FieldMixin) {
    */
   toggleExtension(state) {
     this.isOpen = typeof state === 'undefined' ? !this.isOpen : state
+
+    // If the value is not supposed to be committed, reset it on close
+    if (this.isOpen) {
+      this.previousValue = this.rawDate
+    } else {
+      setTimeout(() => {
+        if (!this.shouldSaveValue) {
+          this.updateDate(this.previousValue)
+        } else {
+          this.shouldSaveValue = false
+        }
+      }, 10)
+    }
   }
 
   /**
-   * Get the props for the input component, but exclude the ones that relate to the date component.
+   * Update the input value.
    *
+   * @param date
    * @return {void}
    */
   updateDate(date) {
-    this.localValue = date
-    this.updateValue(date.format(this.storageFormat))
+    this.updateValue(date ? date.format(this.storageFormat) : null)
+  }
+
+  /**
+   * Remember to commit the current value when the user intended to save.
+   *
+   * @return {void}
+   */
+  saveDate() {
+    this.shouldSaveValue = true
   }
 
   /**
@@ -117,47 +150,20 @@ export default class FormDate extends Mixins(FieldMixin) {
    * @return {void}
    */
   clearDate() {
-    this.localValue = null
+    this.updateValue(null)
   }
 
   /**
    * Convert the storage date value into the format determined in the visibleFormat prop.
    *
-   * @return {string}
-   */
-  transformDate() {
-    return this.localValue ? this.localValue.format(this.visibleFormat) : null
-  }
-
-  /**
-   * If the date value has been changed through direct input, an attempt is made to apply it.
-   * If it's not a valid date, the previous value will be set back.
-   *
    * @param date
-   * @return string
+   * @return {string|null}
    */
-  onBlur(date) {
-    let currentDate = this.transformDate()
-
-    if (date && date !== currentDate) {
-      this.localValue = this.formatDateValue(date, currentDate)
+  transformDate(date) {
+    if (date && dayjs(date, this.storageFormat).isValid()) {
+      return this.rawDate.format(this.visibleFormat)
     }
-  }
-
-  formatDateValue(newDate, oldDate) {
-    return dayjs(newDate, this.visibleFormat).isValid()
-      ? dayjs(newDate, this.visibleFormat)
-      : dayjs(oldDate, this.visibleFormat)
-  }
-
-  /**
-   * Update the local value whenever the cValue is changed.
-   */
-  @Watch('cValue', {
-    immediate: true
-  })
-  onValueChanged(val) {
-    this.localValue = this.formatDateValue(val, this.transformDate())
+    return null
   }
 }
 </script>
