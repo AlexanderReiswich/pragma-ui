@@ -1,5 +1,5 @@
 <template>
-  <div v-if="inputField.errors" class="push-up-s push-down-m red align-v">
+  <div v-if="inputField.errors" class="push-up-s push-down-m red align-v pui-input-errors">
     <tico
       name="alert"
       color="red"
