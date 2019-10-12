@@ -379,5 +379,6 @@ export default class FormInput extends Mixins(FieldMixin) {
 
 <style lang="stylus">
 .input-block .popper-inner
-  overflow hidden
+  overflow auto
+  max-height 85vh
 </style>
