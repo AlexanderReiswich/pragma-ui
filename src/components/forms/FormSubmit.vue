@@ -1,5 +1,10 @@
 <template>
-  <button type="submit" :disabled="disabled">
+  <button
+    type="submit"
+    class="pui-submit-btn"
+    :class="{ 'pui-submit-btn-submitting': formLoading }"
+    :disabled="disabled || (disableOnSubmit && formLoading)"
+  >
     <span class="spinner push-right-s" :class="spinnerClass" v-if="formLoading" />
 
     <template v-if="formLoading && savingText">
@@ -27,6 +32,12 @@ export default class FormSubmit extends Mixins(FieldMixin) {
 
   @Prop(String) spinnerClass
   @Prop(String) savingText
+
+  @Prop({
+    type: Boolean,
+    default: true
+  })
+  disableOnSubmit
 
   /**
    * Checks if the slot content is empty and if so displays default text.
