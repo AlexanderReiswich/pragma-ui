@@ -194,7 +194,7 @@ export default class FormSelect extends Mixins(FieldMixin) {
         if (this.cValue) {
           const selected = this.options.find(item => item.value === this.cValue)
 
-          if (selected.text === this.localValue) {
+          if (selected && selected.text === this.localValue) {
             return this.options
           }
         }
