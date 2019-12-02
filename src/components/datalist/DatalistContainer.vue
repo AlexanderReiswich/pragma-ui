@@ -232,13 +232,11 @@ export default class DatalistContainer extends Vue {
   doesSearchMatch(value) {
     if (!this.config.search) return true
 
-    if (value) {
-      return this.config.strictSearch
-        ? value.includes(this.config.search)
-        : value.toLowerCase().includes(this.config.search.toLowerCase())
-    } else {
-      return false
-    }
+    const val = '' + value
+
+    return this.config.strictSearch
+      ? val.includes(this.config.search)
+      : val.toLowerCase().includes(this.config.search.toLowerCase())
   }
 
   /**
