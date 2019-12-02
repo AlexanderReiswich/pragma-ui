@@ -203,8 +203,13 @@ export default class FormSelect extends Mixins(FieldMixin) {
 
     if (this.searchable && this.localValue) {
       const val = typeof this.localValue === 'string' ? this.localValue.toLowerCase() : null
-      return this.options.filter(e => e.text.toLowerCase().includes(val))
+      return this.options.filter(e =>
+        String(e.text)
+          .toLowerCase()
+          .includes(val)
+      )
     }
+
     return this.options
   }
 
@@ -218,6 +223,30 @@ export default class FormSelect extends Mixins(FieldMixin) {
         .filter(Boolean)
     }
     return []
+  }
+
+  closeDropdownHandler(e) {
+    if (this.isOpen) {
+      if (e.key === 'Escape' || (e.key === 'Enter' && !this.multiple)) {
+        document.activeElement.blur()
+        this.isOpen = false
+      }
+
+      if (e.key === 'Tab') {
+        // Close all except the currently focused select element
+        if (this.$refs.textfield.$refs.input !== document.activeElement) {
+          this.isOpen = false
+        }
+      }
+    }
+  }
+
+  created() {
+    window.addEventListener('keyup', this.closeDropdownHandler)
+  }
+
+  beforeDestroy() {
+    window.removeEventListener('keyup', this.closeDropdownHandler)
   }
 
   /**
@@ -250,6 +279,9 @@ export default class FormSelect extends Mixins(FieldMixin) {
             }
           }
           return [val] // Create a new array that contains only the selected value
+        } else {
+          // If this is a single-select field, we can close it after selecting one value
+          this.isOpen = false
         }
         if (!empty) {
           return val // If empty option is false, change nothing
