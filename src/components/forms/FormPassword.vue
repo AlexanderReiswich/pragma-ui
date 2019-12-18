@@ -44,7 +44,6 @@ export default class FormPassword extends Mixins(FieldMixin) {
   get filteredProps() {
     const {
       strengthCheck,
-      preventSubmit,
       securityLabelWeak,
       securityLabelModerate,
       securityLabelStrong,

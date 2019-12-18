@@ -303,8 +303,10 @@ export default class FormInput extends Mixins(FieldMixin) {
   beforeSubmit(e) {
     if (this.preventSubmit) {
       e.preventDefault()
+    } else {
+      this.$emit('beforeSubmit', this.cValue)
+      this.form.submit ? this.form.submit() : null
     }
-    this.$emit('beforeSubmit', this.cValue)
   }
 
   /**

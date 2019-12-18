@@ -1,5 +1,5 @@
 <template>
-  <form method="post" accept-charset="utf-8" @submit.prevent="submit" :id="name">
+  <form method="post" accept-charset="utf-8" @submit="submit" :id="name">
     <slot />
   </form>
 </template>
@@ -12,7 +12,7 @@ import clone from 'lodash.clonedeep'
 @Component({
   provide() {
     const form = {}
-    const includes = ['config', 'name', 'localData', 'errors', 'setValue', 'loading']
+    const includes = ['config', 'name', 'submit', 'localData', 'errors', 'setValue', 'loading']
 
     for (let i of includes) {
       Object.defineProperty(form, i, {
@@ -44,6 +44,7 @@ export default class FormContainer extends Vue {
   loading = false
 
   @Prop(String) customConfig
+
   @Prop({
     type: String,
     default: Math.random()
@@ -51,6 +52,7 @@ export default class FormContainer extends Vue {
       .substring(7)
   })
   name
+
   @Prop(String) load
   @Prop(String) save
   @Prop(Object) data
@@ -109,6 +111,7 @@ export default class FormContainer extends Vue {
   }
 
   submit() {
+    console.log('submit')
     const form = {
       setLoading: this.setLoading,
       getErrors: this.getErrors
